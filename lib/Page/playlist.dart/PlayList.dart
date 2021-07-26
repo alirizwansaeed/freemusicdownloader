@@ -5,26 +5,25 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
-import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
+import 'package:freemusicdownloader/Controller/AudioController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
+import 'package:freemusicdownloader/Shared/ColorList.dart';
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:freemusicdownloader/Shared/shimmerlist.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
-import '../../Shared/GradientColorList.dart';
 
 class PlayList extends StatelessWidget {
   static const pagename = 'playList';
   PlayList({Key? key}) : super(key: key);
 
   final ApiController _apicontroller = Get.find<ApiController>();
-  final AudioplayerController _audioplayerController =
-      Get.find<AudioplayerController>();
   final TogglePlayersheetController _toggleplayersheet =
       Get.find<TogglePlayersheetController>();
-  final int _tilesImageQuality = 50;
+  final _audioController = Get.find<AudioController>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,180 +35,15 @@ class PlayList extends StatelessWidget {
         return _toggleplayersheet.isBottomsheetopen.value ? false : true;
       },
       child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            _header(context, _random, _routedata, _width),
-            // _playAllButton(),
-            Obx(() => _apicontroller.isPlaylistLoading.value
-                ? SliverToBoxAdapter(child: ShimmerLoading())
-                : _listView(_random, _routedata)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  SliverPadding _listView(Random _random, Map<dynamic, dynamic> _routedata) {
-    return SliverPadding(
-      padding: EdgeInsets.only(bottom: 70),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (BuildContext context, int index) => Bounce(
-            onPressed: () => _audioplayerController.loadPlaylist(index),
-            duration: Duration(milliseconds: 100),
-            child: Card(
-              clipBehavior: Clip.antiAlias,
-              elevation: 1,
-              child: Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    stops: [0, 1.0],
-                    colors: [
-                      Theme.of(context).scaffoldBackgroundColor.withOpacity(0),
-                      ColorList.colorList[
-                          _random.nextInt(ColorList.colorList.length)]
-                    ],
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: Container(
-                        padding: EdgeInsets.only(right: .1, top: .1),
-                        foregroundDecoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            stops: [0.5, .95],
-                            colors: [
-                              Colors.white.withOpacity(0.0),
-                              Theme.of(context).scaffoldBackgroundColor
-                            ],
-                          ),
-                        ),
-                        height: 50,
-                        width: 50,
-                        child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: ImageQuality.imageQuality(
-                              value:
-                                  '${_apicontroller.playListList.value.songs[index].image}',
-                              size: _tilesImageQuality),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 5,
-                      left: 52,
-                      right: 40,
-                      child: Text(
-                        '${_apicontroller.playListList.value.songs[index].song}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.nunito(
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF333b66),
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 30,
-                      left: 52,
-                      right: 40,
-                      child: Text(
-                        _apicontroller
-                                    .playListList.value.songs[index].singers ==
-                                ''
-                            ? '${_apicontroller.playListList.value.songs[index].primaryartists} - ${_apicontroller.playListList.value.songs[index].album}'
-                            : '${_apicontroller.playListList.value.songs[index].singers} - ${_apicontroller.playListList.value.songs[index].album}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ),
-                    Positioned(
-                      top: 5,
-                      right: 0,
-                      child: Bounce(
-                        duration: Duration(milliseconds: 100),
-                        onPressed: () {},
-                        child: Container(
-                          padding: EdgeInsets.only(left: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(.5),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              bottomLeft: Radius.circular(20),
-                            ),
-                          ),
-                          height: 40,
-                          width: 40,
-                          child: Icon(
-                            Icons.file_download,
-                            color: Color(0xFF333b66),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          childCount: _apicontroller.playListList.value.songs.length,
-        ),
-      ),
-    );
-  }
-
-  SliverToBoxAdapter _playAllButton() {
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: EdgeInsets.only(left: 15, right: 0),
-        height: 70,
-        child: Row(
-          children: [
-            TweenAnimationBuilder(
-              duration: Duration(milliseconds: 500),
-              tween: Tween<double>(begin: 2, end: 1.0),
-              builder: (context, double _value, child) => Transform.scale(
-                scale: _value,
-                child: Text(
-                  'Songs',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF333b66),
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Divider(
-                indent: 10,
-                thickness: 5,
-                height: 10,
-                color: Colors.grey.shade200,
-              ),
-            ),
-            TweenAnimationBuilder(
-              duration: Duration(milliseconds: 500),
-              tween: Tween<double>(begin: 2, end: 1.0),
-              builder: (context, double _value, child) => Transform.scale(
-                scale: _value,
-                child: Icon(
-                  Icons.play_arrow,
-                  size: 60,
-                ),
-              ),
-            ),
-          ],
-        ),
+        body: Obx(() => CustomScrollView(
+              slivers: [
+                _header(context, _random, _routedata, _width),
+                _playAllButton(_routedata),
+                _apicontroller.isPlaylistLoading.value
+                    ? SliverToBoxAdapter(child: ShimmerLoading())
+                    : _listView(_random, _routedata),
+              ],
+            )),
       ),
     );
   }
@@ -223,16 +57,16 @@ class PlayList extends StatelessWidget {
         expandedHeight: 250,
         background: MutableBackground(
           collapsedColor:
-              ColorList.colorList[_random.nextInt(ColorList.colorList.length)],
+              ColorList.lightcolors[_random.nextInt(ColorList.lightcolors.length)],
           expandedWidget: Container(
             padding: EdgeInsets.only(
-              bottom: 30,
+              bottom: 2,
             ),
             foregroundDecoration: BoxDecoration(
               gradient: LinearGradient(
+                stops: [0.0, 0.9],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: [0, .8],
                 colors: [
                   Colors.transparent,
                   Theme.of(context).scaffoldBackgroundColor,
@@ -287,6 +121,183 @@ class PlayList extends StatelessWidget {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _playAllButton(Map<dynamic, dynamic> _routedata) {
+    return SliverToBoxAdapter(
+      child: DelayedDisplay(
+        slidingBeginOffset: const Offset(10.0, .0),
+        child: Container(
+          padding: EdgeInsets.only(left: 4, right: 4),
+          height: 100,
+          child: Row(
+            children: [
+              Text(
+                'Songs',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.nunito(
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF333b66),
+                  fontSize: 22,
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  indent: 10,
+                  thickness: 5,
+                  height: 10,
+                  color: Colors.grey.shade200,
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  await _audioController.play(
+                      songs: _apicontroller.playListList.value.songs,
+                      index: 0,
+                      albumid: _routedata['id'] as String);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FaIcon(
+                    _audioController.isPlaying.value &&
+                            _audioController.currentAlbumid.value ==
+                                _routedata['id']
+                        ? FontAwesomeIcons.pause
+                        : FontAwesomeIcons.play,
+                    size: 40,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  SliverPadding _listView(Random _random, Map<dynamic, dynamic> _routedata) {
+    return SliverPadding(
+      padding: EdgeInsets.only(bottom: 70),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) => Bounce(
+            onPressed: () async {
+              await _audioController.play(
+                  songs: _apicontroller.playListList.value.songs,
+                  index: index,
+                  albumid: _routedata['id']);
+            },
+            duration: Duration(milliseconds: 100),
+            child: Card(
+              clipBehavior: Clip.antiAlias,
+              elevation: 1,
+              child: Container(
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    stops: [0, 1.0],
+                    colors: [
+                      Theme.of(context).scaffoldBackgroundColor.withOpacity(0),
+                      ColorList.lightcolors[
+                          _random.nextInt(ColorList.lightcolors.length)]
+                    ],
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: Container(
+                        padding: EdgeInsets.only(right: .1, top: .1),
+                        foregroundDecoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            stops: [0.5, .95],
+                            colors: [
+                              Colors.white.withOpacity(0.0),
+                              Theme.of(context).scaffoldBackgroundColor
+                            ],
+                          ),
+                        ),
+                        height: 50,
+                        width: 50,
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: ImageQuality.imageQuality(
+                              value: _apicontroller
+                                  .playListList.value.songs[index].image,
+                              size: 150),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 5,
+                      left: 52,
+                      right: 40,
+                      child: Text(
+                        '${_apicontroller.playListList.value.songs[index].song}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.nunito(
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF333b66),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 30,
+                      left: 52,
+                      right: 40,
+                      child: Text(
+                        _apicontroller
+                                    .playListList.value.songs[index].singers ==
+                                ''
+                            ? '${_apicontroller.playListList.value.songs[index].primaryartists} - ${_apicontroller.playListList.value.songs[index].album}'
+                            : '${_apicontroller.playListList.value.songs[index].singers} - ${_apicontroller.playListList.value.songs[index].album}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                    ),
+                    Positioned(
+                      top: 5,
+                      right: 0,
+                      child: Bounce(
+                        duration: Duration(milliseconds: 100),
+                        onPressed: () {
+                          print(_apicontroller
+                              .playListList.value.songs[index].the320Kbps);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(.5),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              bottomLeft: Radius.circular(20),
+                            ),
+                          ),
+                          height: 40,
+                          width: 40,
+                          child: Icon(
+                            Icons.file_download,
+                            color: Color(0xFF333b66),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          childCount: _apicontroller.playListList.value.songs.length,
+        ),
       ),
     );
   }

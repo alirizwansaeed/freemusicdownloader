@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ColorList {
-
-
-  static   List<Color> colorList = [
+  static List<Color> lightcolors = [
     Colors.blue.shade100,
     Colors.blueGrey.shade100,
     Colors.brown.shade100,
@@ -21,5 +19,19 @@ class ColorList {
     Colors.purple.shade100,
     Colors.red.shade100,
     Colors.teal.shade100,
+  ];
+
+  static const List<Color> primaries = <Color>[
+    Colors.red,
+    Colors.pink,
+    Colors.purple,
+    Colors.deepPurple,
+    Colors.indigo,
+    Colors.blue,
+    Colors.teal,
+    Colors.green,
+    Colors.lightGreen,
+    Colors.orange,
+    Colors.deepOrange,
   ];
 }

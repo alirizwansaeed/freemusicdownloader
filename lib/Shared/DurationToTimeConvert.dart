@@ -1,5 +1,5 @@
 class DurationToTime {
-  static durationToTime(int value) {
-    return '${Duration(seconds: value).inMinutes}:${Duration(seconds: value).inMilliseconds.toString().substring(0, 2)}';
+  static String durationToTime(int value) {
+    return '${Duration(milliseconds: value).inMinutes}:${Duration(milliseconds: value).inSeconds.remainder(60).toString().padLeft(2, '0')}';
   }
 }

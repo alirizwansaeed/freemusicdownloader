@@ -21,8 +21,7 @@ class ApiService extends GetxController {
 
   static Future<SingleAlbumModel?> fetchAlbum(String id) async {
     var _responce = await _dio.get(
-      'https://www.jiosaavn.com/api.php?__call=content.getAlbumDetails&_format=json&cc=in&_marker=0%3F_marker%3D0&albumid=$id',
-    );
+        'https://www.jiosaavn.com/api.php?__call=content.getAlbumDetails&_format=json&cc=in&_marker=0%3F_marker%3D0&albumid=$id');
 
     if (_responce.statusCode == 200) {
       return singleAlbumFromJson(_responce.data);

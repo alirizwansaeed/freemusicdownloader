@@ -24,6 +24,7 @@ class ApiController extends GetxController {
     isAlbumLoading(true);
     try {
       var _albumlist = await ApiService.fetchAlbum(id);
+
       if (_albumlist != null) {
         albumList(_albumlist);
       }

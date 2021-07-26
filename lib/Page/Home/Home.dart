@@ -6,12 +6,9 @@ import 'package:freemusicdownloader/Controller/ApiController.dart';
 import 'package:freemusicdownloader/Page/Home/GridView.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../Shared/GradientColorList.dart';
+import '../../Shared/ColorList.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
-
   @override
   _HomeState createState() => _HomeState();
 }
@@ -20,7 +17,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late final ApiController _apiController = Get.find<ApiController>();
   PageController? _pageViewController;
   TabController? _tabBarController;
-
   List<String> _headerName = [
     'Trending Now',
     'New Albums',
@@ -45,7 +41,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print("mehod rebuild");
     final safeAreaHeight = MediaQuery.of(context).padding.top;
     Random random = Random();
     return Scaffold(
@@ -73,7 +68,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ],
               )),
           _appBar(safeAreaHeight, random),
-          _tabbar(safeAreaHeight)
+          _tabbar(safeAreaHeight),
         ],
       ),
     );
@@ -124,8 +119,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                ColorList.colorList[random.nextInt(ColorList.colorList.length)],
-                ColorList.colorList[random.nextInt(ColorList.colorList.length)],
+                ColorList.lightcolors[random.nextInt(ColorList.lightcolors.length)],
+                ColorList.lightcolors[random.nextInt(ColorList.lightcolors.length)],
               ],
             ),
           ),
@@ -136,6 +131,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 top: safeAreaHeight,
                 child: SvgPicture.asset(
                   'assets/appbar_music.svg',
+                  cacheColorFilter: true,
                   height: safeAreaHeight + 120,
                   color: Colors.black.withOpacity(0.05),
                 ),
@@ -157,7 +153,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Music Player',
+                      'Floovi Music',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.nunito(
