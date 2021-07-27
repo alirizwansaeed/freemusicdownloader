@@ -1,11 +1,15 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
 import 'package:freemusicdownloader/Page/Home/GridView.dart';
+import 'package:freemusicdownloader/Page/Setting/Setting.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import '../../Shared/ColorList.dart';
 
 class Home extends StatefulWidget {
@@ -41,6 +45,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+
     final safeAreaHeight = MediaQuery.of(context).padding.top;
     Random random = Random();
     return Scaffold(
@@ -119,8 +126,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                ColorList.lightcolors[random.nextInt(ColorList.lightcolors.length)],
-                ColorList.lightcolors[random.nextInt(ColorList.lightcolors.length)],
+                ColorList
+                    .lightcolors[random.nextInt(ColorList.lightcolors.length)],
+                ColorList
+                    .lightcolors[random.nextInt(ColorList.lightcolors.length)],
               ],
             ),
           ),
@@ -146,9 +155,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               ),
               Positioned(
-                top: safeAreaHeight + 10,
+                top: safeAreaHeight,
                 left: 20,
-                right: 10,
+                right: 0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -163,41 +172,45 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     ),
                     Row(
                       children: [
-                        SizedBox(
-                          height: 45,
+                        Container(
+                          padding: EdgeInsets.only(top: 10),
+                          height: 55,
                           width: 45,
-                          child: NeumorphicButton(
-                            style: NeumorphicStyle(
-                              boxShape: NeumorphicBoxShape.circle(),
-                              color: Colors.transparent,
-                            ),
-                            onPressed: () {},
-                            padding: EdgeInsets.only(
-                              top: 6,
-                            ),
-                            child: SvgPicture.asset(
-                              'assets/search_icon.svg',
-                              color: Color(0xFF333b66),
-                            ),
+                          child: SvgPicture.asset(
+                            'assets/search_icon.svg',
+                            color: Color(0xFF333b66),
                           ),
                         ),
                         SizedBox(
                           width: 10,
                         ),
-                        SizedBox(
-                          height: 45,
-                          width: 45,
-                          child: NeumorphicButton(
-                            style: NeumorphicStyle(
-                              boxShape: NeumorphicBoxShape.circle(),
-                              color: Colors.transparent,
+                        Bounce(
+                          duration: Duration(milliseconds: 300),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: Setting(),
+                                settings: RouteSettings(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 40,
+                            width: 60,
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.pink,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                bottomLeft: Radius.circular(20),
+                              ),
                             ),
-                            onPressed: () {},
-                            padding: EdgeInsets.only(
-                                top: 8, left: 2, right: 2, bottom: 2),
                             child: SvgPicture.asset(
                               'assets/menu_icon.svg',
-                              color: Color(0xFF333b66),
+                              width: 50,
+                              color: Colors.white,
                             ),
                           ),
                         ),

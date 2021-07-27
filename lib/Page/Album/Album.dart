@@ -5,12 +5,14 @@ import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
 import 'package:freemusicdownloader/Controller/AudioController.dart';
 import 'package:freemusicdownloader/Controller/DownloadController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
 import 'package:freemusicdownloader/Page/DownloadDialog/DownloadDialog.dart';
+import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:freemusicdownloader/Shared/shimmerlist.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,12 +20,22 @@ import 'package:shimmer/shimmer.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
 import '../../Shared/ColorList.dart';
 
-class Album extends StatelessWidget {
+class Album extends StatefulWidget {
   static const pagename = 'Album';
+
+  @override
+  _AlbumState createState() => _AlbumState();
+}
+
+class _AlbumState extends State<Album> {
   final _apicontroller = Get.find<ApiController>();
+
   final _toggleplayersheet = Get.find<TogglePlayersheetController>();
+
   final _audioController = Get.find<AudioController>();
+
   final _downloadController = Get.find<DownloadController>();
+
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
@@ -34,18 +46,18 @@ class Album extends StatelessWidget {
         return _toggleplayersheet.isBottomsheetopen.value ? false : true;
       },
       child: Scaffold(
-        body: Obx(
-          () => CustomScrollView(
-            slivers: [
-              _header(context, _random, _routedata, _size),
-              _playAllButton(_routedata),
-              _apicontroller.isAlbumLoading.value
+        body: CustomScrollView(
+          slivers: [
+            _header(context, _random, _routedata, _size),
+            _playAllButton(_routedata),
+            Obx(
+              () => _apicontroller.isAlbumLoading.value
                   ? SliverToBoxAdapter(
                       child: ShimmerLoading(),
                     )
                   : _listView(_random, _routedata, _size),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
@@ -77,9 +89,9 @@ class Album extends StatelessWidget {
               ),
             ),
             child: CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: _routedata['image'],
-            ),
+                fit: BoxFit.cover,
+                imageUrl: ImageQuality.imageQuality(
+                    value: _routedata['image'], size: 350)),
           ),
         ),
         children: [
@@ -97,9 +109,9 @@ class Album extends StatelessWidget {
                 height: 150,
                 width: 150,
                 child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: _routedata['image'],
-                ),
+                    fit: BoxFit.cover,
+                    imageUrl: ImageQuality.imageQuality(
+                        value: _routedata['image'], size: 350)),
               ),
             ),
           ),
@@ -127,35 +139,35 @@ class Album extends StatelessWidget {
             expandedAlignment: Alignment.bottomLeft,
             expandedPadding: EdgeInsets.only(left: 160, bottom: 10, right: 0),
             options: [HeaderItemOptions.scale],
-            child: SizedBox(
-              height: 50,
-              child: _apicontroller.isAlbumLoading.value
-                  ? _headerShimmer(_size)
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${_apicontroller.albumList.value.primaryArtists}',
-                          maxLines: 1,
-                          style: GoogleFonts.nunito(
-                            fontWeight: FontWeight.w900,
-                            color: Color(0xFF333b66).withOpacity(.5),
-                            fontSize: 15,
-                          ),
+            child: Obx(() => SizedBox(
+                  height: 50,
+                  child: _apicontroller.isAlbumLoading.value
+                      ? _headerShimmer(_size)
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${_apicontroller.albumList.value.primaryArtists}',
+                              maxLines: 1,
+                              style: GoogleFonts.nunito(
+                                fontWeight: FontWeight.w900,
+                                color: Color(0xFF333b66).withOpacity(.5),
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              '${_apicontroller.albumList.value.year}',
+                              maxLines: 1,
+                              style: GoogleFonts.nunito(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey.shade400,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          '${_apicontroller.albumList.value.year}',
-                          maxLines: 1,
-                          style: GoogleFonts.nunito(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade400,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
+                )),
           ),
         ],
       ),
@@ -191,7 +203,8 @@ class Album extends StatelessWidget {
   SliverToBoxAdapter _playAllButton(Map<dynamic, dynamic> _routedata) {
     return SliverToBoxAdapter(
       child: DelayedDisplay(
-        slidingBeginOffset: const Offset(10.0, .0),
+        slidingCurve: Curves.bounceOut,
+        slidingBeginOffset: const Offset(.5, 0.0),
         child: Container(
           padding: EdgeInsets.only(left: 4, right: 4),
           height: 100,
@@ -224,14 +237,14 @@ class Album extends StatelessWidget {
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: FaIcon(
-                    _audioController.isPlaying.value &&
-                            _audioController.currentAlbumid.value ==
-                                _routedata['id']
-                        ? FontAwesomeIcons.pause
-                        : FontAwesomeIcons.play,
-                    size: 40,
-                  ),
+                  child: Obx(() => FaIcon(
+                        _audioController.isPlaying.value &&
+                                _audioController.currentAlbumid.value ==
+                                    _routedata['id']
+                            ? FontAwesomeIcons.pause
+                            : FontAwesomeIcons.play,
+                        size: 40,
+                      )),
                 ),
               ),
             ],
@@ -289,9 +302,9 @@ class Album extends StatelessWidget {
                         height: 60,
                         width: 60,
                         child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: _routedata['image'],
-                        ),
+                            fit: BoxFit.cover,
+                            imageUrl: ImageQuality.imageQuality(
+                                value: _routedata['image'], size: 350)),
                       ),
                     ),
                     Positioned(
@@ -335,7 +348,8 @@ class Album extends StatelessWidget {
                           height: 50,
                           width: 40,
                           child: Container(
-                            padding: EdgeInsets.only(left: 10),
+                            padding:
+                                EdgeInsets.only(left: 10, top: 5, bottom: 10),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(.5),
                               borderRadius: BorderRadius.only(
@@ -343,8 +357,10 @@ class Album extends StatelessWidget {
                                 bottomLeft: Radius.circular(20),
                               ),
                             ),
-                            child: Icon(
-                              Icons.file_download,
+                            height: 40,
+                            width: 40,
+                            child: SvgPicture.asset(
+                              'assets/download.svg',
                               color: Color(0xFF333b66),
                             ),
                           ),

@@ -6,7 +6,9 @@ import 'package:freemusicdownloader/Page/Home/Home.dart';
 import 'package:freemusicdownloader/Page/PlayerSheet/playersheet.dart';
 import 'package:get/get.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MyApp());
 }
 

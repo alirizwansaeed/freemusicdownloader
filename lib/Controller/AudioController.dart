@@ -70,7 +70,6 @@ class AudioController extends GetxController {
   }
 
   void _playbackStateStream(PlaybackState _playbackState) {
-    print(_playbackState.processingState);
     if (_playbackState.playing) {
       _isStatenone(false);
       _isConcatingState(false);

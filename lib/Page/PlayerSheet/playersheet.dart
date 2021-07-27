@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'package:freemusicdownloader/Controller/AudioController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
 import 'package:freemusicdownloader/Page/PlayerSheet/ProgressSlider.dart';
@@ -75,7 +76,6 @@ class _PlayerSheetState extends State<PlayerSheet> {
         return true;
       },
       child: SolidBottomSheet(
-        showOnAppear: false,
         smoothness: Smoothness.high,
         controller: _controller,
         maxHeight: _mediaquary.size.height,
