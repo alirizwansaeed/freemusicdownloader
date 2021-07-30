@@ -13,6 +13,7 @@ class ApiController extends GetxController {
   Rx<PlaylistModel> playListList = PlaylistModel().obs;
   Rx<Song> singlesong = Song().obs;
 
+
   void fetchHomePage() async {
     var _homepagedata = await ApiService.fetchHomePage();
     if (_homepagedata != null) {

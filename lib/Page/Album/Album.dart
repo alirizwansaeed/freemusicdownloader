@@ -8,10 +8,11 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
-import 'package:freemusicdownloader/Controller/AudioController.dart';
 import 'package:freemusicdownloader/Controller/DownloadController.dart';
+import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
 import 'package:freemusicdownloader/Page/DownloadDialog/DownloadDialog.dart';
+
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:freemusicdownloader/Shared/shimmerlist.dart';
 import 'package:get/get.dart';
@@ -31,8 +32,7 @@ class _AlbumState extends State<Album> {
   final _apicontroller = Get.find<ApiController>();
 
   final _toggleplayersheet = Get.find<TogglePlayersheetController>();
-
-  final _audioController = Get.find<AudioController>();
+  final _audioplayerController = Get.find<AudioPlayerController>();
 
   final _downloadController = Get.find<DownloadController>();
 
@@ -139,35 +139,37 @@ class _AlbumState extends State<Album> {
             expandedAlignment: Alignment.bottomLeft,
             expandedPadding: EdgeInsets.only(left: 160, bottom: 10, right: 0),
             options: [HeaderItemOptions.scale],
-            child: Obx(() => SizedBox(
-                  height: 50,
-                  child: _apicontroller.isAlbumLoading.value
-                      ? _headerShimmer(_size)
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${_apicontroller.albumList.value.primaryArtists}',
-                              maxLines: 1,
-                              style: GoogleFonts.nunito(
-                                fontWeight: FontWeight.w900,
-                                color: Color(0xFF333b66).withOpacity(.5),
-                                fontSize: 15,
-                              ),
+            child: Obx(
+              () => SizedBox(
+                height: 50,
+                child: _apicontroller.isAlbumLoading.value
+                    ? _headerShimmer(_size)
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${_apicontroller.albumList.value.primaryArtists}',
+                            maxLines: 1,
+                            style: GoogleFonts.nunito(
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF333b66).withOpacity(.5),
+                              fontSize: 15,
                             ),
-                            Text(
-                              '${_apicontroller.albumList.value.year}',
-                              maxLines: 1,
-                              style: GoogleFonts.nunito(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey.shade400,
-                                fontSize: 14,
-                              ),
+                          ),
+                          Text(
+                            '${_apicontroller.albumList.value.year}',
+                            maxLines: 1,
+                            style: GoogleFonts.nunito(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade400,
+                              fontSize: 14,
                             ),
-                          ],
-                        ),
-                )),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
           ),
         ],
       ),
@@ -228,23 +230,24 @@ class _AlbumState extends State<Album> {
                   color: Colors.grey.shade200,
                 ),
               ),
-              GestureDetector(
-                onTap: () async {
-                  await _audioController.play(
-                      songs: _apicontroller.albumList.value.songs,
-                      index: 0,
-                      albumid: _routedata['id'] as String);
+              Bounce(
+                duration: Duration(milliseconds: 200),
+                onPressed: () {
+                  _audioplayerController.loadSong(
+                      _apicontroller.albumList.value.songs,
+                      0,
+                      _routedata['id']);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Obx(() => FaIcon(
-                        _audioController.isPlaying.value &&
-                                _audioController.currentAlbumid.value ==
-                                    _routedata['id']
-                            ? FontAwesomeIcons.pause
-                            : FontAwesomeIcons.play,
-                        size: 40,
-                      )),
+                  child: Obx(
+                    () => FaIcon(
+                      _audioplayerController.currentAlbumId == _routedata['id']
+                          ? FontAwesomeIcons.pause
+                          : FontAwesomeIcons.play,
+                      size: 40,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -262,11 +265,10 @@ class _AlbumState extends State<Album> {
         delegate: SliverChildBuilderDelegate(
           (BuildContext context, int index) => Bounce(
             onPressed: () async {
-              await _audioController.play(
-                songs: _apicontroller.albumList.value.songs,
-                index: index,
-                albumid: _routedata['id'],
-              );
+              _audioplayerController.loadSong(
+                  _apicontroller.albumList.value.songs,
+                  index,
+                  _routedata['id']);
             },
             duration: Duration(milliseconds: 100),
             child: Card(
@@ -316,9 +318,9 @@ class _AlbumState extends State<Album> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.nunito(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           color: Color(0xFF333b66),
-                          fontSize: 16,
+                          fontSize: 15,
                         ),
                       ),
                     ),
@@ -333,7 +335,7 @@ class _AlbumState extends State<Album> {
                             : '${_apicontroller.albumList.value.songs[index].singers}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                        style: TextStyle(color: Colors.grey , fontSize: 12),
                       ),
                     ),
                     Positioned(

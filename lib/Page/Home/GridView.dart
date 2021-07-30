@@ -1,15 +1,14 @@
 import 'dart:math';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:freemusicdownloader/Controller/AudioController.dart';
+
 import 'package:freemusicdownloader/Models/MainPageModel.dart';
 import 'package:freemusicdownloader/Page/Album/Album.dart';
 import 'package:freemusicdownloader/Page/playlist.dart/PlayList.dart';
-import 'package:freemusicdownloader/Services/AudioService.dart';
+
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +21,6 @@ class HomeGridView extends StatelessWidget {
   late final ApiController _apiController = Get.find<ApiController>();
   late final List list;
   final int _gridImageQuality = 350;
-  final _audioController = Get.find<AudioController>();
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +77,9 @@ class HomeGridView extends StatelessWidget {
           if (list[index].type == ContentType.SONG) {
             await _apiController.fetchSong(list[index].id);
 
-            await _audioController.play(
-                songs: [_apiController.singlesong.value],
-                index: 0,
-                albumid: list[index].id);
+
           }
-          if (!AudioService.running) {
-            await AudioService.start(backgroundTaskEntrypoint: entrypoint);
-          }
+
         },
         child: _girdTiles(random, index),
       ),

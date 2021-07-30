@@ -8,7 +8,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
-import 'package:freemusicdownloader/Controller/AudioController.dart';
+import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Controller/DownloadController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
 import 'package:freemusicdownloader/Page/DownloadDialog/DownloadDialog.dart';
@@ -26,8 +26,9 @@ class PlayList extends StatelessWidget {
   final ApiController _apicontroller = Get.find<ApiController>();
   final TogglePlayersheetController _toggleplayersheet =
       Get.find<TogglePlayersheetController>();
-  final _audioController = Get.find<AudioController>();
+
   final _downloadController = Get.find<DownloadController>();
+  final _audioplayerController = Get.find<AudioPlayerController>();
 
   @override
   Widget build(BuildContext context) {
@@ -160,23 +161,24 @@ class PlayList extends StatelessWidget {
                   color: Colors.grey.shade200,
                 ),
               ),
-              GestureDetector(
-                onTap: () async {
-                  await _audioController.play(
-                      songs: _apicontroller.playListList.value.songs,
-                      index: 0,
-                      albumid: _routedata['id'] as String);
+              Bounce(
+                duration: Duration(milliseconds: 200),
+                onPressed: () {
+                  _audioplayerController.loadSong(
+                      _apicontroller.playListList.value.songs,
+                      0,
+                      _routedata['id']);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Obx(() => FaIcon(
-                        _audioController.isPlaying.value &&
-                                _audioController.currentAlbumid.value ==
-                                    _routedata['id']
-                            ? FontAwesomeIcons.pause
-                            : FontAwesomeIcons.play,
-                        size: 40,
-                      )),
+                  child: Obx(
+                    () => FaIcon(
+                      _audioplayerController.currentAlbumId == _routedata['id']
+                          ? FontAwesomeIcons.pause
+                          : FontAwesomeIcons.play,
+                      size: 40,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -193,10 +195,11 @@ class PlayList extends StatelessWidget {
         delegate: SliverChildBuilderDelegate(
           (BuildContext context, int index) => Bounce(
             onPressed: () async {
-              await _audioController.play(
-                  songs: _apicontroller.playListList.value.songs,
-                  index: index,
-                  albumid: _routedata['id']);
+              _audioplayerController.loadSong(
+                _apicontroller.playListList.value.songs,
+                index,
+                _routedata['id'],
+              );
             },
             duration: Duration(milliseconds: 100),
             child: Card(
@@ -251,9 +254,9 @@ class PlayList extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.nunito(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           color: Color(0xFF333b66),
-                          fontSize: 16,
+                          fontSize: 15,
                         ),
                       ),
                     ),

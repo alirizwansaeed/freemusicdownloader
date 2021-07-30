@@ -1,14 +1,13 @@
 import 'package:another_xlider/another_xlider.dart';
 import 'package:flutter/material.dart';
-import 'package:freemusicdownloader/Controller/AudioController.dart';
+import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProgressSlider extends StatelessWidget {
   ProgressSlider({Key? key}) : super(key: key);
   final Rx<bool> _isSliderTapped = false.obs;
-  final _audioController = Get.find<AudioController>();
-
+  final _audioController = Get.find<AudioPlayerController>();
   final Rx<double> slidervalue = 0.0.obs;
   @override
   Widget build(BuildContext context) {
@@ -24,17 +23,15 @@ class ProgressSlider extends StatelessWidget {
                   child: SliderTheme(
                     data: SliderThemeData(
                       disabledActiveTrackColor: Colors.grey,
-                      disabledThumbColor: Colors.grey,
                       trackHeight: _isSliderTapped.value ? 12 : 2,
                       disabledInactiveTrackColor: Colors.transparent,
                       thumbShape: SliderComponentShape.noOverlay,
                     ),
                     child: Slider(
-                      value: _audioController.bufferPosition,
-                      min: 0,
-                      max: _audioController
-                          .currentMediaItem.value.duration!.inMilliseconds
+                      value: _audioController.bufferPostion.inMilliseconds
                           .toDouble(),
+                      min: 0,
+                      max: _audioController.duration.inMilliseconds.toDouble(),
                       onChanged: null,
                     ),
                   ),
@@ -46,11 +43,9 @@ class ProgressSlider extends StatelessWidget {
                   ),
                   child: FlutterSlider(
                     values: [
-                      _audioController.currentPosition,
+                      _audioController.position.inMilliseconds.toDouble(),
                     ],
-                    max: _audioController
-                        .currentMediaItem.value.duration!.inMilliseconds
-                        .toDouble(),
+                    max: _audioController.duration.inMilliseconds.toDouble(),
                     min: 0,
                     handlerHeight: 20,
                     onDragging: (handlerIndex, lowerValue, upperValue) {
@@ -107,7 +102,7 @@ class ProgressSlider extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${Duration(milliseconds: _audioController.currentPosition.toInt()).inMinutes}:${Duration(milliseconds: _audioController.currentPosition.toInt()).inSeconds.remainder(60).toString().padLeft(2, '0')}',
+                  '${_audioController.position.inMinutes}:${_audioController.position.inSeconds.remainder(60).toString().padLeft(2, '0')}',
                   textScaleFactor: 1,
                   style: TextStyle(
                     fontSize: 12,
@@ -116,7 +111,7 @@ class ProgressSlider extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${Duration(milliseconds: _audioController.currentMediaItem.value.duration!.inMilliseconds).inMinutes}:${Duration(milliseconds: _audioController.currentMediaItem.value.duration!.inMilliseconds).inSeconds.remainder(60).toString().padLeft(2, '0')}',
+                  '${_audioController.duration.inMinutes}:${_audioController.duration.inSeconds.remainder(60).toString().padLeft(2, '0')}',
                   textScaleFactor: 1,
                   style: TextStyle(
                     fontSize: 12,
