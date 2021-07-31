@@ -30,7 +30,7 @@ class HomeGridView extends StatelessWidget {
     return StaggeredGridView.countBuilder(
       physics: BouncingScrollPhysics(),
       padding: EdgeInsets.only(
-          top: safeAreaHeight + 200, right: 8, left: 8, bottom: 50),
+          top: safeAreaHeight + 140, right: 8, left: 8, bottom: 50),
       crossAxisCount: 2,
       itemCount: list.length,
       staggeredTileBuilder: (int index) => StaggeredTile.count(1, 1),
@@ -76,10 +76,7 @@ class HomeGridView extends StatelessWidget {
           }
           if (list[index].type == ContentType.SONG) {
             await _apiController.fetchSong(list[index].id);
-
-
           }
-
         },
         child: _girdTiles(random, index),
       ),
@@ -98,10 +95,10 @@ class HomeGridView extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
               gradient: LinearGradient(
                 colors: [
-                  ColorList
-                      .lightcolors[random.nextInt(ColorList.lightcolors.length)],
-                  ColorList
-                      .lightcolors[random.nextInt(ColorList.lightcolors.length)],
+                  ColorList.lightcolors[
+                      random.nextInt(ColorList.lightcolors.length)],
+                  ColorList.lightcolors[
+                      random.nextInt(ColorList.lightcolors.length)],
                 ],
               ),
             ),

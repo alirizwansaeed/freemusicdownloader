@@ -43,13 +43,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.5"
-  audiotagger:
-    dependency: "direct main"
-    description:
-      name: audiotagger
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.2.1"
   auto_size_text:
     dependency: "direct main"
     description:
@@ -127,6 +120,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  expandable:
+    dependency: "direct main"
+    description:
+      name: expandable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.1"
   external_path:
     dependency: "direct main"
     description:
@@ -235,13 +235,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.4"
-  get_storage:
-    dependency: "direct main"
-    description:
-      name: get_storage
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.3"
   google_fonts:
     dependency: "direct main"
     description:

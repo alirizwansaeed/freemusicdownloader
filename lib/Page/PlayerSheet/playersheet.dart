@@ -58,7 +58,7 @@ class _PlayerSheetState extends State<PlayerSheet> {
         return true;
       },
       child: SolidBottomSheet(
-        showOnAppear: true,
+        showOnAppear: false,
         smoothness: Smoothness.high,
         controller: _solidController,
         maxHeight: _mediaquary.size.height,

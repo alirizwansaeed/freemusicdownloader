@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -116,7 +115,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   SizedBox _appBar(double safeAreaHeight, Random random) {
     return SizedBox(
-      height: safeAreaHeight + 220,
+      height: safeAreaHeight + 160,
       width: double.infinity,
       child: ClipPath(
         clipBehavior: Clip.antiAlias,
@@ -184,15 +183,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         SizedBox(
                           width: 10,
                         ),
-                        Bounce(
-                          duration: Duration(milliseconds: 300),
-                          onPressed: () {
+                        GestureDetector(
+                          onTap: () {
                             Navigator.push(
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeft,
                                 child: Setting(),
-                                settings: RouteSettings(),
                               ),
                             );
                           },
@@ -209,7 +206,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             ),
                             child: SvgPicture.asset(
                               'assets/menu_icon.svg',
-                              width: 50,
                               color: Colors.white,
                             ),
                           ),
@@ -232,27 +228,14 @@ class AppbarClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path_0 = Path();
     path_0.moveTo(0, 0);
-    path_0.quadraticBezierTo(size.width * 0.0021875, size.height * 0.3780000, 0,
-        size.height * 0.5020000);
-    path_0.cubicTo(
-        size.width * 0.0437500,
-        size.height * 0.6635000,
-        size.width * 0.2312500,
-        size.height * 0.6845000,
-        size.width * 0.5012500,
-        size.height * 0.6500000);
-    path_0.cubicTo(
-        size.width * 0.9175000,
-        size.height * 0.6040000,
-        size.width * 0.9487500,
-        size.height * 0.8120000,
-        size.width,
-        size.height);
-    path_0.quadraticBezierTo(
-        size.width * 0.9975000, size.height * 0.7490000, size.width, 0);
+    path_0.lineTo(0, size.height);
+    path_0.quadraticBezierTo(size.width * 0.0193750, size.height * 0.8500000,
+        size.width * 0.1212500, size.height * 0.8350000);
+    path_0.quadraticBezierTo(size.width * 0.1962500, size.height * 0.8268750,
+        size.width, size.height * 0.7475000);
+    path_0.lineTo(size.width, 0);
     path_0.lineTo(0, 0);
     path_0.close();
-
     return path_0;
   }
 
