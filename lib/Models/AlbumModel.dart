@@ -8,15 +8,15 @@ SingleAlbumModel singleAlbumFromJson(String str) =>
 
 class SingleAlbumModel {
   SingleAlbumModel({
-     this.year='',
-     this.primaryArtists='',
-     this.albumid='',
-     this.songs=const[],
+    this.year = '',
+    this.primaryArtists = '',
+    this.albumid = '',
+    this.songs = const [],
   });
 
   String year;
   String primaryArtists;
-  String albumid;
+  String? albumid;
   List<Song> songs;
   factory SingleAlbumModel.fromJson(Map<String, dynamic> json) =>
       SingleAlbumModel(

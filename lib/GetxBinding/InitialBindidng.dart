@@ -11,6 +11,6 @@ class InitialBinding extends Bindings {
     Get.lazyPut(() => AudioPlayerController());
     Get.put<ApiController>(ApiController());
     Get.put(TogglePlayersheetController(), permanent: true);
-    Get.lazyPut(() => DownloadController());
+    Get.lazyPut<DownloadController>(() => DownloadController());
   }
 }

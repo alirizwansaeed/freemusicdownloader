@@ -6,10 +6,12 @@ import 'package:just_audio/just_audio.dart';
 
 class AudioPlayerController extends GetxController {
   AudioPlayerService _audioService = AudioPlayerService();
+
+  Stream<PositionData> get positiondataStream {
+    return _audioService.positiondataStream;
+  }
+
   var _isplaying = false.obs;
-  var _position = Duration(microseconds: 1).obs;
-  var _duration = Duration(milliseconds: 1).obs;
-  var _bufferPosition = Duration.zero.obs;
   var _processingState = ProcessingState.idle.obs;
   var _currentPlayingIndex = 0.obs;
   var _currentalbumid = ''.obs;
@@ -52,22 +54,6 @@ class AudioPlayerController extends GetxController {
     return _isplaying.value;
   }
 
-  Duration get position {
-    return _position.value > _duration.value
-        ? _duration.value
-        : _position.value;
-  }
-
-  Duration get duration {
-    return _duration.value;
-  }
-
-  Duration get bufferPostion {
-    return _bufferPosition.value > _duration.value
-        ? _duration.value
-        : _bufferPosition.value;
-  }
-
   ProcessingState get playerProcessingState {
     return _processingState.value;
   }
@@ -83,11 +69,6 @@ class AudioPlayerController extends GetxController {
       _ishuffle(event.shuffle);
       _isplaying(event.playerState!.playing);
       _currentPlayingIndex(event.index);
-      _position(event.position == null ? Duration.zero : event.position);
-      _duration(event.duration == null ? Duration.zero : event.duration);
-      _bufferPosition(
-        event.bufferedPosition == null ? Duration.zero : event.bufferedPosition,
-      );
       _processingState(event.playerState!.processingState);
     });
     super.onInit();
@@ -95,7 +76,7 @@ class AudioPlayerController extends GetxController {
 
   void loadSong(List<Song> songs, int index, String currentalbumid) async {
     if (listEquals(_currentlyPlayingSongs, songs)) {
-      _audioService.seekTo(0.0, index: index);
+      _audioService.seekTo(Duration.zero, index: index);
       _audioService.play();
     } else
       _currentlyPlayingSongs.clear();
@@ -116,7 +97,7 @@ class AudioPlayerController extends GetxController {
     _audioService.previous();
   }
 
-  void seekto(double duration, {int? index}) {
+  void seekto(Duration duration, {int? index}) {
     _audioService.seekTo(duration);
   }
 

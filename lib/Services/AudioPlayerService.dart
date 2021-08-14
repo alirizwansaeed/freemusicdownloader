@@ -76,8 +76,8 @@ class AudioPlayerService {
     _audioPlayer.seekToNext();
   }
 
-  void seekTo(double position, {int? index}) {
-    _audioPlayer.seek(Duration(milliseconds: position.toInt()), index: index);
+  void seekTo(Duration position, {int? index}) {
+    _audioPlayer.seek(position, index: index);
   }
 
  Future< void> loopMood(LoopMode loopMode)async {

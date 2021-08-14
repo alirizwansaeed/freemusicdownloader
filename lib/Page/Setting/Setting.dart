@@ -1,10 +1,14 @@
-import 'package:delayed_display/delayed_display.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:freemusicdownloader/Shared/PopButton.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Setting extends StatelessWidget {
-  Setting({Key? key}) : super(key: key);
+  final Color randomColor;
+  Setting({
+    Key? key,
+    required this.randomColor,
+  }) : super(key: key);
   final ExpandableController _controllerStreaming =
       ExpandableController(initialExpanded: false);
   final ExpandableController _controllerfeedback =
@@ -15,41 +19,25 @@ class Setting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: popButtom(context, randomColor),
+        centerTitle: true,
+        title: Text(
+          'Setting',
+          maxLines: 1,
+          style: GoogleFonts.nunito(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF333b66),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: SafeArea(
-                  child: Container(
-                margin: EdgeInsets.only(top: 10),
-                height: 40,
-                width: 60,
-                padding: EdgeInsets.only(top: 0, bottom: 0),
-                decoration: BoxDecoration(
-                  color: Colors.pink,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
-                ),
-                child: Icon(
-                  Icons.keyboard_backspace,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              )),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            _streamingQuality(),
-            _feedback(),
-            _aboutUs()
-          ],
+          children: [_streamingQuality(), _feedback(), _aboutUs()],
         ),
       ),
     );
@@ -138,8 +126,9 @@ class Setting extends StatelessWidget {
                 height: 150,
                 child: TextFormField(
                   style: TextStyle(
-                      fontSize: 14, color: Color(0xFF333b66).withOpacity(.5)),
-                  autofocus: true,
+                    fontSize: 14,
+                    color: Color(0xFF333b66).withOpacity(.5),
+                  ),
                   cursorColor: Colors.black,
                   cursorWidth: 2,
                   cursorHeight: 25,

@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -10,7 +9,7 @@ import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Controller/DownloadController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
 import 'package:freemusicdownloader/Page/DownloadDialog/DownloadDialog.dart';
-import 'package:freemusicdownloader/Page/PlayerSheet/ProgressSlider.dart';
+import 'package:freemusicdownloader/Page/PlayerSheet/newprogress.dart';
 import 'package:freemusicdownloader/Shared/ColorList.dart';
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:get/get.dart';
@@ -65,12 +64,15 @@ class _PlayerSheetState extends State<PlayerSheet> {
         draggableBody: true,
         minHeight: 60,
         headerBar: SizedBox.shrink(),
-        body: Obx(() => Opacity(
-              opacity: _audiocontroller.currentPlayingSong.id == '' ? 0 : 1,
-              child: Material(
-                  color: Colors.transparent,
-                  child: _openSheet(_mediaquary, _random)),
-            )),
+        body: Obx(
+          () => Visibility(
+            visible:
+                _audiocontroller.currentPlayingSong.id == '' ? false : true,
+            child: Material(
+                color: Colors.transparent,
+                child: _openSheet(_mediaquary, _random)),
+          ),
+        ),
       ),
     );
   }
@@ -301,15 +303,15 @@ class _PlayerSheetState extends State<PlayerSheet> {
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Opacity(
                     opacity: ((_heightStream.value - 60.0) /
                         (_meidaquery.size.height - 60.0)),
-                    child: ProgressSlider(),
+                    child: Newprogress(),
                   ),
                   SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
                   Opacity(
                     opacity: ((_heightStream.value - 60.0) /

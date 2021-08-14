@@ -1,18 +1,55 @@
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:external_path/external_path.dart';
 import 'package:filesize/filesize.dart';
+import 'package:flowder/flowder.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class DownloadController extends GetxController {
+  ReceivePort _port = ReceivePort();
   Dio _dio = Dio();
   CancelToken _downlaodcancelToken = CancelToken();
   CancelToken _songSizeCancelToken = CancelToken();
+  late DownloaderCore core;
   var kbps96 = '...'.obs;
   var kbps160 = '...'.obs;
   var kbps320 = '...'.obs;
   var progress = 0.0.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    FlutterDownloader.registerCallback(downloadCallback);
+
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+  }
+
+  @override
+  void onClose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+    super.onClose();
+  }
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int downloadprogress) {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send!.send([id, status, downloadprogress]);
+  }
+
+  void createPath() async {
+    if (await _permissionmanager()) {
+      var path = await ExternalPath.getExternalStorageDirectories();
+      Directory directory = Directory(path[0] + '/Floovi');
+      await directory.create();
+      print(path[0]);
+    }
+  }
 
   Future<void> downloadSong({
     required String? url,
@@ -21,31 +58,50 @@ class DownloadController extends GetxController {
   }) async {
     progress(0.0);
     if (await _permissionmanager()) {
-      var path = await ExternalPath.getExternalStoragePublicDirectory(
-          ExternalPath.DIRECTORY_MUSIC);
-      Directory directory = Directory(path + '/Floovi Music');
+      var path = await ExternalPath.getExternalStorageDirectories();
+      Directory directory = Directory(path[0] + '/Floovi');
       if (!await directory.exists()) {
         await directory.create(recursive: true);
       }
       if (await directory.exists()) {
         File _file = File(directory.path + '/$name' + '$quality' + '.mp3');
         if (await _file.exists()) {
-          progress(1.0);
-          return;
-        } else
-          try {
-            _downlaodcancelToken = CancelToken();
-            await _dio.download(
-              url!,
-              _file.path,
-              cancelToken: _downlaodcancelToken,
-              onReceiveProgress: (downloaded, totalsize) {
-                progress(downloaded / totalsize);
-              },
-            );
-          } on DioError catch (e) {
-            print(e.error);
-          }
+          _file.delete();
+        }
+        try {
+          await FlutterDownloader.enqueue(
+            url: url!,
+            fileName: '$name' + '$quality' + '.mp3',
+            savedDir: directory.path,
+            showNotification: true,
+            openFileFromNotification: true,
+          );
+        } catch (e) {
+          print(e);
+
+          // try {
+          //   await FlutterDownloader.enqueue(
+          //     url: url!,
+          //     fileName: '$name' + '$quality' + '.mp3',
+          //     savedDir: directory.path,
+          //     showNotification: true,
+          //     openFileFromNotification: true,
+          //   );
+
+          // final downloaderUtils = DownloaderUtils(
+          //   progressCallback: (current, total) {
+          //     progress((current / total));
+          //   },
+          //   file: _file,
+          //   progress: ProgressImplementation(),
+          //   onDone: () => print('Download done'),
+          //   deleteOnCancel: true,
+          // );
+          //   core = await Flowder.download(url!, downloaderUtils);
+          // } catch (e) {
+          //   print(e);
+          // }
+        }
       }
     }
   }

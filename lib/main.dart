@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:freemusicdownloader/GetxBinding/InitialBindidng.dart';
 import 'package:freemusicdownloader/Page/Home/Home.dart';
@@ -7,6 +9,13 @@ import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(
+      debug: false // optional: set false to disable printing logs to console
+      );
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent, // status bar color
+  ));
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',

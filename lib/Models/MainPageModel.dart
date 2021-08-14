@@ -1,17 +1,9 @@
-// To parse this JSON data, do
-//
-//     final mainPageModel = mainPageModelFromJson(jsonString);
 
+
+import 'package:freemusicdownloader/Models/Types/Types.dart';
 import 'package:freemusicdownloader/Shared/FormatedString.dart';
 import 'dart:convert';
 
-enum ContentType { ALBUM, PLAYLIST, SONG }
-
-final chartTypeValues = EnumValues({
-  "album": ContentType.ALBUM,
-  "playlist": ContentType.PLAYLIST,
-  "song": ContentType.SONG
-});
 
 MainPageModel mainPageModelFromJson(String str) =>
     MainPageModel.fromJson(json.decode(str));
@@ -112,14 +104,3 @@ class TopPlaylist {
       image: json["image"]);
 }
 
-class EnumValues<T> {
-  Map<String, T> map;
-  Map<T, String>? reverseMap;
-  EnumValues(this.map);
-  Map<T, String> get reverse {
-    if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
-    }
-    return reverseMap!;
-  }
-}

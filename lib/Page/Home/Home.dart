@@ -1,10 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
+import 'package:freemusicdownloader/Controller/DownloadController.dart';
+import 'package:freemusicdownloader/Models/Search/TopSearchModel.dart';
 import 'package:freemusicdownloader/Page/Home/GridView.dart';
+import 'package:freemusicdownloader/Page/SearchBar/SearchBar.dart';
 import 'package:freemusicdownloader/Page/Setting/Setting.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +20,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  late final ApiController _apiController = Get.find<ApiController>();
+  final ApiController _apiController = Get.find<ApiController>();
+  Random _random = Random();
   PageController? _pageViewController;
   TabController? _tabBarController;
   List<String> _headerName = [
@@ -29,10 +33,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    super.initState();
+
     _apiController.fetchHomePage();
     _pageViewController = PageController(initialPage: 0);
     _tabBarController = TabController(length: 4, vsync: this);
-    super.initState();
   }
 
   @override
@@ -44,11 +49,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-    FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
-
     final safeAreaHeight = MediaQuery.of(context).padding.top;
-    Random random = Random();
+    final Color _randomColor =
+        ColorList.primaries[_random.nextInt(ColorList.primaries.length)];
     return Scaffold(
       body: Stack(
         children: [
@@ -73,7 +76,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   ),
                 ],
               )),
-          _appBar(safeAreaHeight, random),
+          _appBar(safeAreaHeight, _random, _randomColor),
           _tabbar(safeAreaHeight),
         ],
       ),
@@ -113,7 +116,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  SizedBox _appBar(double safeAreaHeight, Random random) {
+  SizedBox _appBar(double safeAreaHeight, Random random, Color _randomColor) {
     return SizedBox(
       height: safeAreaHeight + 160,
       width: double.infinity,
@@ -126,9 +129,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             gradient: LinearGradient(
               colors: [
                 ColorList
-                    .lightcolors[random.nextInt(ColorList.lightcolors.length)],
+                    .lightcolors[random.nextInt(ColorList.lightcolors.length)]
+                    .withOpacity(.9),
                 ColorList
-                    .lightcolors[random.nextInt(ColorList.lightcolors.length)],
+                    .lightcolors[random.nextInt(ColorList.lightcolors.length)]
+                    .withOpacity(.9),
               ],
             ),
           ),
@@ -171,13 +176,29 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     ),
                     Row(
                       children: [
-                        Container(
-                          padding: EdgeInsets.only(top: 10),
-                          height: 55,
-                          width: 45,
-                          child: SvgPicture.asset(
-                            'assets/search_icon.svg',
-                            color: Color(0xFF333b66),
+                        Bounce(
+                          duration: Duration(milliseconds: 200),
+                          onPressed: () async {
+                            _apiController.topSearch(TopSearchModel());
+                            await Future.delayed(Duration(milliseconds: 100),
+                                () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: SearchBar(),
+                                ),
+                              );
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.only(top: 10),
+                            height: 55,
+                            width: 40,
+                            child: SvgPicture.asset(
+                              'assets/search_icon.svg',
+                              color: Color(0xFF333b66),
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -189,16 +210,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeft,
-                                child: Setting(),
+                                child: Setting(
+                                  randomColor: _randomColor,
+                                ),
                               ),
                             );
                           },
                           child: Container(
-                            height: 40,
-                            width: 60,
+                            height: 35,
+                            width: 50,
                             padding: EdgeInsets.only(top: 10, bottom: 10),
                             decoration: BoxDecoration(
-                              color: Colors.pink,
+                              color: _randomColor,
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(20),
                                 bottomLeft: Radius.circular(20),

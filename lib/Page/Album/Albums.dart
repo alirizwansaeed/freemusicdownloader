@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:freemusicdownloader/Models/PlaylistModel.dart';
+import 'package:freemusicdownloader/Models/AlbumModel.dart';
 import 'package:get/get.dart';
 
 import 'package:freemusicdownloader/Controller/ApiController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
 import 'package:freemusicdownloader/Shared/Detailpage.dart';
 
-class Playlist extends StatelessWidget {
-  Playlist({
+class Album extends StatelessWidget {
+  Album({
     Key? key,
   }) : super(key: key);
-
   final _apicontroller = Get.find<ApiController>();
   final _toggleplayersheet = Get.find<TogglePlayersheetController>();
 
@@ -20,17 +19,18 @@ class Playlist extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         if (_toggleplayersheet.isBottomsheetopen.value == false) {
-          _apicontroller.cancelToken.cancel('Playlist request cancel');
-          _apicontroller.playListList(PlaylistModel());
+          _apicontroller.cancelToken.cancel('album request cancel');
+          _apicontroller.albumList(SingleAlbumModel());
         }
+
         return _toggleplayersheet.isBottomsheetopen.value ? false : true;
       },
       child: Obx(
         () => Scaffold(
           body: Detail(
-            songs: _apicontroller.playListList.value.songs,
-            releaseYear: '',
-            primaryAtrist: '',
+            songs: _apicontroller.albumList.value.songs,
+            releaseYear: _apicontroller.albumList.value.year,
+            primaryAtrist: _apicontroller.albumList.value.primaryArtists,
             isLoading: _apicontroller.isAlbumLoading.value,
             routeTitle: _routedata['title'],
             routeId: _routedata['id'],
