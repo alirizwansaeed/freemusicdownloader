@@ -4,7 +4,6 @@ import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
-import 'package:freemusicdownloader/Controller/DownloadController.dart';
 import 'package:freemusicdownloader/Models/Search/TopSearchModel.dart';
 import 'package:freemusicdownloader/Page/Home/GridView.dart';
 import 'package:freemusicdownloader/Page/SearchBar/SearchBar.dart';
@@ -166,7 +165,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Floovi Music',
+                      'Floovi',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.nunito(

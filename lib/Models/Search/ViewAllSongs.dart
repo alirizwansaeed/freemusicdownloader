@@ -32,7 +32,7 @@ class Result {
     this.permaUrl,
     this.image,
     this.language,
-    this.year,
+    this.year = '',
     this.playCount,
     this.explicitContent,
     this.listCount,
@@ -48,7 +48,7 @@ class Result {
   final String? permaUrl;
   final String? image;
   final String? language;
-  final String? year;
+  final String year;
   final String? playCount;
   final String? explicitContent;
   final String? listCount;
@@ -61,6 +61,7 @@ class Result {
             ? null
             : FormatedString.formatedString(json["name"]),
         id: json["id"],
+        year: json["year"] == null ? '' : json["year"],
         title: FormatedString.formatedString(json["title"]),
         subtitle: FormatedString.formatedString(json["subtitle"]),
         headerDesc: json["header_desc"],
@@ -74,12 +75,17 @@ class Result {
 class MoreInfo {
   final String? the320Kbps;
   final String? encryptedMediaUrl;
+  final String? album;
   MoreInfo({
     this.the320Kbps,
     this.encryptedMediaUrl,
+    this.album,
   });
 
   factory MoreInfo.fromJson(Map<String, dynamic> json) => MoreInfo(
+        album: json['album'] == null
+            ? null
+            : FormatedString.formatedString(json['album']),
         the320Kbps: json["320kbps"] == null ? null : json["320kbps"],
         encryptedMediaUrl: json["encrypted_media_url"] == null
             ? null

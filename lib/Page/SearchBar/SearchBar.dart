@@ -7,12 +7,14 @@ import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
-import 'package:freemusicdownloader/Controller/DownloadController.dart';
+import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
 import 'package:freemusicdownloader/Models/Search/TopSearchModel.dart';
-import 'package:freemusicdownloader/Page/DownloadDialog/DownloadDialog.dart';
+import 'package:freemusicdownloader/Page/Album/Albums.dart';
+import 'package:freemusicdownloader/Page/DownloadDialog/DownloadSong.dart';
 import 'package:freemusicdownloader/Page/SearchBar/pages/DetailAlbum.dart';
 import 'package:freemusicdownloader/Page/SearchBar/pages/ViewAllSongs.dart';
+import 'package:freemusicdownloader/Page/playlist.dart/playlist.dart';
 import 'package:freemusicdownloader/Shared/ColorList.dart';
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:freemusicdownloader/Shared/ListTilesClipper.dart';
@@ -31,9 +33,9 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final _apicontroller = Get.find<ApiController>();
-  final _downloadController = Get.find<DownloadController>();
   final _toggleplayersheet = Get.find<TogglePlayersheetController>();
   final TextEditingController _searchController = TextEditingController();
+  final _audioController = Get.find<AudioPlayerController>();
   var controllertext = ''.obs;
   final FocusNode _focusNode = FocusNode();
 
@@ -43,7 +45,6 @@ class _SearchBarState extends State<SearchBar> {
       if (_searchController.text.length > 0) {
         controllertext(_searchController.text);
         _apicontroller.fetchTopsearch(_searchController.text);
-
       }
     });
     super.initState();
@@ -66,7 +67,6 @@ class _SearchBarState extends State<SearchBar> {
               _apicontroller.topsearchCancelToken
                   .cancel('top search cancel by user');
             }
-          
           }
 
           return _toggleplayersheet.isBottomsheetopen.value ? false : true;
@@ -135,6 +135,7 @@ class _SearchBarState extends State<SearchBar> {
                   await Future.delayed(Duration(milliseconds: 300), () {
                     _apicontroller.fetchSearchDetail(
                         controllertext.value, 1, ViewFuctionType.SONG);
+
                     Navigator.push(
                       context,
                       PageTransition(
@@ -161,7 +162,14 @@ class _SearchBarState extends State<SearchBar> {
             child: ListView.builder(
               itemCount: _apicontroller.topSearch.value.songs.length,
               itemBuilder: (context, index) => Bounce(
-                onPressed: () async {},
+                onPressed: () async {
+                  _focusNode.unfocus();
+                  await _apicontroller.fetchSong(
+                      _apicontroller.topSearch.value.songs[index].id!);
+
+                  _audioController
+                      .loadSong([_apicontroller.singleSong.value], 0, '');
+                },
                 duration: Duration(milliseconds: 100),
                 child: Card(
                   clipBehavior: Clip.antiAlias,
@@ -244,8 +252,15 @@ class _SearchBarState extends State<SearchBar> {
                               _focusNode.unfocus();
                               await _apicontroller.fetchSong(_apicontroller
                                   .topSearch.value.songs[index].id!);
-
-                              _downloadButton(context, index);
+                              Get.bottomSheet(
+                                DownloadSong(
+                                    songName:
+                                        _apicontroller.singleSong.value.song,
+                                    songUrl: _apicontroller
+                                        .singleSong.value.encryptedMediaUrl,
+                                    is320: _apicontroller
+                                        .singleSong.value.the320Kbps),
+                              );
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(vertical: 5),
@@ -326,87 +341,126 @@ class _SearchBarState extends State<SearchBar> {
             physics: BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             itemCount: data.length,
-            itemBuilder: (context, index) => Row(
-              children: [
-                Container(
-                  width: 150,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      ClipPath(
-                        clipper: ListTilesClipper(),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            gradient: LinearGradient(
-                              colors: [
-                                ColorList.lightcolors[random
-                                    .nextInt(ColorList.lightcolors.length)],
-                                ColorList.lightcolors[random
-                                    .nextInt(ColorList.lightcolors.length)],
-                              ],
+            itemBuilder: (context, index) => Bounce(
+              duration: Duration(milliseconds: 200),
+              onPressed: () {
+                if (viewFuctionType == ViewFuctionType.ALBUM) {
+                  _apicontroller.fetchAlbum(data[index].id!);
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: Album(),
+                      settings: RouteSettings(
+                        arguments: {
+                          "image": data[index].image,
+                          "title": data[index].title,
+                          "id": data[index].id,
+                        },
+                      ),
+                    ),
+                  );
+                }
+                if (viewFuctionType == ViewFuctionType.PLAYLIST) {
+                  _apicontroller.fetchPlaylist(data[index].id!);
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: Playlist(),
+                      settings: RouteSettings(
+                        arguments: {
+                          "image": data[index].image,
+                          "title": data[index].title,
+                          "id": data[index].id,
+                        },
+                      ),
+                    ),
+                  );
+                }
+              },
+              child: Row(
+                children: [
+                  Container(
+                    width: 150,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        ClipPath(
+                          clipper: ListTilesClipper(),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              gradient: LinearGradient(
+                                colors: [
+                                  ColorList.lightcolors[random
+                                      .nextInt(ColorList.lightcolors.length)],
+                                  ColorList.lightcolors[random
+                                      .nextInt(ColorList.lightcolors.length)],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      FlipCard(
-                        back: Container(
-                          padding: EdgeInsets.all(4.0),
-                          margin:
-                              EdgeInsets.only(right: 15, left: 15, bottom: 30),
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            color: ColorList.primaries[
-                                random.nextInt(ColorList.primaries.length)],
-                            borderRadius: BorderRadius.circular(4.0),
+                        FlipCard(
+                          back: Container(
+                            padding: EdgeInsets.all(4.0),
+                            margin: EdgeInsets.only(
+                                right: 15, left: 15, bottom: 30),
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              color: ColorList.primaries[
+                                  random.nextInt(ColorList.primaries.length)],
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            child: Text(
+                              data[index].description!,
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
-                          child: Text(
-                            data[index].description!,
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        front: Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                          margin: EdgeInsets.only(
-                            right: 15,
-                            left: 15,
-                            bottom: 30,
-                          ),
-                          child: Image.network(
-                            ImageQuality.imageQuality(
-                                value: data[index].image!, size: 250),
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 5,
-                        left: 5,
-                        right: 5,
-                        child: Center(
-                          child: Text(
-                            data[index].title!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.nunito(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF333b66),
+                          front: Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            margin: EdgeInsets.only(
+                              right: 15,
+                              left: 15,
+                              bottom: 30,
+                            ),
+                            child: Image.network(
+                              ImageQuality.imageQuality(
+                                  value: data[index].image!, size: 350),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          bottom: 5,
+                          left: 5,
+                          right: 5,
+                          child: Center(
+                            child: Text(
+                              data[index].title!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.nunito(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF333b66),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  width: 10,
-                )
-              ],
+                  SizedBox(
+                    width: 10,
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -492,20 +546,5 @@ class _SearchBarState extends State<SearchBar> {
         ),
       );
     }
-  }
-
-  void _downloadButton(BuildContext context, int index) {
-    _downloadController.songSize(
-        _apicontroller.singleSong.value.encryptedMediaUrl,
-        _apicontroller.singleSong.value.the320Kbps);
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return DownloadDialog(
-          songUrl: _apicontroller.singleSong.value.encryptedMediaUrl,
-          songName: _apicontroller.singleSong.value.song,
-        );
-      },
-    );
   }
 }

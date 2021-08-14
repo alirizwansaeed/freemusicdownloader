@@ -36,7 +36,6 @@ class ApiService extends GetxController {
   }
 
   static Future<TopSearchModel?> fetchTopSearch(String query) async {
-    topsearchCancelToken = CancelToken();
     if (!topsearchCancelToken.isCancelled) {
       topsearchCancelToken.cancel('Cancel search by user');
       topsearchCancelToken = CancelToken();

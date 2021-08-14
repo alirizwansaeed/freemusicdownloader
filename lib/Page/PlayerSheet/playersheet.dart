@@ -8,7 +8,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Controller/DownloadController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
-import 'package:freemusicdownloader/Page/DownloadDialog/DownloadDialog.dart';
 import 'package:freemusicdownloader/Page/PlayerSheet/newprogress.dart';
 import 'package:freemusicdownloader/Shared/ColorList.dart';
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
@@ -258,22 +257,11 @@ class _PlayerSheetState extends State<PlayerSheet> {
                         Bounce(
                           duration: Duration(milliseconds: 200),
                           onPressed: () {
-                            print(_audiocontroller
-                                .currentPlayingSong.encryptedMediaUrl);
                             _downloadController.songSize(
                                 _audiocontroller
                                     .currentPlayingSong.encryptedMediaUrl,
                                 _audiocontroller.currentPlayingSong.the320Kbps);
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return DownloadDialog(
-                                    songUrl: _audiocontroller
-                                        .currentPlayingSong.encryptedMediaUrl,
-                                    songName: _audiocontroller
-                                        .currentPlayingSong.song);
-                              },
-                            );
+
                           },
                           child: SvgPicture.asset(
                             'assets/download.svg',

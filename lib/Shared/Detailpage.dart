@@ -7,15 +7,13 @@ import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:freemusicdownloader/Page/DownloadDialog/DownloadSong.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
-
 import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
-import 'package:freemusicdownloader/Controller/DownloadController.dart';
 import 'package:freemusicdownloader/Models/SingleSong.dart';
-import 'package:freemusicdownloader/Page/DownloadDialog/DownloadDialog.dart';
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:freemusicdownloader/Shared/PopButton.dart';
 import 'package:freemusicdownloader/Shared/shimmerlist.dart';
@@ -44,7 +42,6 @@ class Detail extends StatelessWidget {
   }) : super(key: key);
 
   final _audioplayerController = Get.find<AudioPlayerController>();
-  final _downloadController = Get.find<DownloadController>();
 
   @override
   Widget build(BuildContext context) {
@@ -239,11 +236,13 @@ class Detail extends StatelessWidget {
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: FaIcon(
-                    _audioplayerController.currentAlbumId == routeId
-                        ? FontAwesomeIcons.pause
-                        : FontAwesomeIcons.play,
-                    size: 40,
+                  child: Obx(
+                    () => FaIcon(
+                      _audioplayerController.currentAlbumId == routeId
+                          ? FontAwesomeIcons.pause
+                          : FontAwesomeIcons.play,
+                      size: 40,
+                    ),
                   ),
                 ),
               ),
@@ -336,7 +335,13 @@ class Detail extends StatelessWidget {
                       right: 0,
                       child: Bounce(
                         duration: Duration(milliseconds: 100),
-                        onPressed: () => _downloadButton(context, index),
+                        onPressed: () {
+                          Get.bottomSheet(DownloadSong(
+                            songName: songs[index].song,
+                            songUrl: songs[index].encryptedMediaUrl,
+                            is320: songs[index].the320Kbps,
+                          ));
+                        },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 5),
                           height: 50,
@@ -369,22 +374,6 @@ class Detail extends StatelessWidget {
           childCount: songs.length,
         ),
       ),
-    );
-  }
-
-  void _downloadButton(BuildContext context, int index) {
-    _downloadController.songSize(
-      songs[index].encryptedMediaUrl,
-      songs[index].the320Kbps,
-    );
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return DownloadDialog(
-          songUrl: songs[index].encryptedMediaUrl,
-          songName: songs[index].song,
-        );
-      },
     );
   }
 }

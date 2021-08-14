@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:external_path/external_path.dart';
 import 'package:filesize/filesize.dart';
-import 'package:flowder/flowder.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -14,11 +13,9 @@ class DownloadController extends GetxController {
   Dio _dio = Dio();
   CancelToken _downlaodcancelToken = CancelToken();
   CancelToken _songSizeCancelToken = CancelToken();
-  late DownloaderCore core;
   var kbps96 = '...'.obs;
   var kbps160 = '...'.obs;
   var kbps320 = '...'.obs;
-  var progress = 0.0.obs;
 
   @override
   void onInit() {
@@ -42,24 +39,15 @@ class DownloadController extends GetxController {
     send!.send([id, status, downloadprogress]);
   }
 
-  void createPath() async {
-    if (await _permissionmanager()) {
-      var path = await ExternalPath.getExternalStorageDirectories();
-      Directory directory = Directory(path[0] + '/Floovi');
-      await directory.create();
-      print(path[0]);
-    }
-  }
-
   Future<void> downloadSong({
     required String? url,
     required String? quality,
     required String? name,
   }) async {
-    progress(0.0);
     if (await _permissionmanager()) {
-      var path = await ExternalPath.getExternalStorageDirectories();
-      Directory directory = Directory(path[0] + '/Floovi');
+      var path = await ExternalPath.getExternalStorageDirectories(
+     );
+      Directory directory = Directory(path[0]+'/Floovi');
       if (!await directory.exists()) {
         await directory.create(recursive: true);
       }
@@ -78,29 +66,6 @@ class DownloadController extends GetxController {
           );
         } catch (e) {
           print(e);
-
-          // try {
-          //   await FlutterDownloader.enqueue(
-          //     url: url!,
-          //     fileName: '$name' + '$quality' + '.mp3',
-          //     savedDir: directory.path,
-          //     showNotification: true,
-          //     openFileFromNotification: true,
-          //   );
-
-          // final downloaderUtils = DownloaderUtils(
-          //   progressCallback: (current, total) {
-          //     progress((current / total));
-          //   },
-          //   file: _file,
-          //   progress: ProgressImplementation(),
-          //   onDone: () => print('Download done'),
-          //   deleteOnCancel: true,
-          // );
-          //   core = await Flowder.download(url!, downloaderUtils);
-          // } catch (e) {
-          //   print(e);
-          // }
         }
       }
     }
@@ -140,7 +105,6 @@ class DownloadController extends GetxController {
   }
 
   void _resetsongsize() {
-    progress(0.0);
     kbps160('...');
     kbps320('...');
     kbps96('...');
@@ -158,7 +122,7 @@ class DownloadController extends GetxController {
     if (_songSizeCancelToken.isCancelled) {
       return;
     } else {
-      _songSizeCancelToken.cancel('size cancel by user');
+      _songSizeCancelToken.cancel('song Size cancel by user');
     }
   }
 

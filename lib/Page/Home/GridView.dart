@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Models/Types/Types.dart';
 import 'package:freemusicdownloader/Page/Album/Albums.dart';
 import 'package:freemusicdownloader/Page/playlist.dart/playlist.dart';
@@ -18,6 +19,7 @@ import '../../Shared/ColorList.dart';
 class HomeGridView extends StatelessWidget {
   HomeGridView({Key? key, required this.list}) : super(key: key);
   late final ApiController _apiController = Get.find<ApiController>();
+  final _audioController = Get.find<AudioPlayerController>();
   late final List list;
   final int _gridImageQuality = 350;
 
@@ -43,7 +45,7 @@ class HomeGridView extends StatelessWidget {
             Navigator.push(
               context,
               PageTransition(
-                type: PageTransitionType.leftToRight,
+                type: PageTransitionType.rightToLeft,
                 child: Album(),
                 settings: RouteSettings(
                   arguments: {
@@ -60,7 +62,7 @@ class HomeGridView extends StatelessWidget {
             Navigator.push(
               context,
               PageTransition(
-                type: PageTransitionType.leftToRight,
+                type: PageTransitionType.rightToLeft,
                 child: Playlist(),
                 settings: RouteSettings(
                   arguments: {
@@ -75,6 +77,7 @@ class HomeGridView extends StatelessWidget {
           }
           if (list[index].type == ContentType.SONG) {
             await _apiController.fetchSong(list[index].id);
+            _audioController.loadSong([_apiController.singleSong.value], 0, '');
           }
         },
         child: _girdTiles(random, index),
