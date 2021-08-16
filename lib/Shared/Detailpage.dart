@@ -66,8 +66,7 @@ class Detail extends StatelessWidget {
     return SliverPersistentHeader(
       pinned: true,
       delegate: FlexibleHeaderDelegate(
-        leading: popButtom(context,
-            ColorList.primaries[_random.nextInt(ColorList.primaries.length)]),
+        leading: popButtom(context),
         statusBarHeight: MediaQuery.of(context).padding.top,
         expandedHeight: 250,
         background: MutableBackground(

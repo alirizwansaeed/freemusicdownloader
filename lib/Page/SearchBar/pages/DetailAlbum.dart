@@ -51,16 +51,18 @@ class ViewAllAlbums extends StatelessWidget {
           return _toggleplayersheet.isBottomsheetopen.value ? false : true;
         },
         child: Material(
-          child: ScrollConfiguration(
-            behavior: ScrollBehavior(),
+          child: NotificationListener<OverscrollIndicatorNotification>(
+            onNotification: (notification) {
+              notification.disallowGlow();
+              return true;
+            },
             child: CustomScrollView(
               controller: _scrollController,
               slivers: [
                 SliverAppBar(
                   leading: popButtom(
                       context,
-                      ColorList.primaries[
-                          _random.nextInt(ColorList.primaries.length)]),
+                     ),
                   centerTitle: true,
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   title: Text(
@@ -206,9 +208,10 @@ class ViewAllAlbums extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               margin: EdgeInsets.only(right: 25, left: 25, bottom: 50),
               child: Text(
-                _apicontroller.detailSearch.value.results[index].subtitle??'' +
-                    ' Year:' +
-                    _apicontroller.detailSearch.value.results[index].year,
+                _apicontroller.detailSearch.value.results[index].subtitle ??
+                    '' +
+                        ' Year:' +
+                        _apicontroller.detailSearch.value.results[index].year,
                 style: TextStyle(color: Colors.white),
               ),
             ),

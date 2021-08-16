@@ -41,16 +41,18 @@ class ViewAllSongs extends StatelessWidget {
           return _toggleplayersheet.isBottomsheetopen.value ? false : true;
         },
         child: Material(
-          child: ScrollConfiguration(
-            behavior: ScrollBehavior(),
+          child: NotificationListener<OverscrollIndicatorNotification>(
+            onNotification: (notification) {
+              notification.disallowGlow();
+              return true;
+            },
             child: CustomScrollView(
               physics: ClampingScrollPhysics(),
               slivers: [
                 SliverAppBar(
                   leading: popButtom(
-                      context,
-                      ColorList.primaries[
-                          _random.nextInt(ColorList.primaries.length)]),
+                    context,
+                  ),
                   centerTitle: true,
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   title: Text(

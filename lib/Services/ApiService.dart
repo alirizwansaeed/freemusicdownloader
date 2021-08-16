@@ -38,8 +38,8 @@ class ApiService extends GetxController {
   static Future<TopSearchModel?> fetchTopSearch(String query) async {
     if (!topsearchCancelToken.isCancelled) {
       topsearchCancelToken.cancel('Cancel search by user');
-      topsearchCancelToken = CancelToken();
     }
+    topsearchCancelToken = CancelToken();
     try {
       var _responce = await _dio.get(
         'https://www.jiosaavn.com/api.php?__call=autocomplete.get&query=$query&_format=json&_marker=0&ctx=wap6dot0',

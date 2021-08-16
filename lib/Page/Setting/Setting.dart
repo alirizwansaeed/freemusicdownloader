@@ -22,7 +22,7 @@ class Setting extends StatelessWidget {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        leading: popButtom(context, randomColor),
+        leading: popButtom(context),
         centerTitle: true,
         title: Text(
           'Setting',
