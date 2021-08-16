@@ -20,7 +20,6 @@ class Album extends StatelessWidget {
       onWillPop: () async {
         if (_toggleplayersheet.isBottomsheetopen.value == false) {
           _apicontroller.cancelToken.cancel('album request cancel');
-          _apicontroller.albumList(SingleAlbumModel());
         }
 
         return _toggleplayersheet.isBottomsheetopen.value ? false : true;
@@ -31,7 +30,7 @@ class Album extends StatelessWidget {
             songs: _apicontroller.albumList.value.songs,
             releaseYear: _apicontroller.albumList.value.year,
             primaryAtrist: _apicontroller.albumList.value.primaryArtists,
-            isLoading: _apicontroller.isAlbumLoading.value,
+            isLoading: _apicontroller.isloading.value,
             routeTitle: _routedata['title'],
             routeId: _routedata['id'],
             routeImage: _routedata['image'],

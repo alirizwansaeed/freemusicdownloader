@@ -1,20 +1,23 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:freemusicdownloader/Models/Types/Types.dart';
+import 'package:freemusicdownloader/Shared/FormatedString.dart';
 
 TopSearchModel topSearchModelFromJson(String str) =>
     TopSearchModel.fromJson(json.decode(str));
 
 class TopSearchModel {
   TopSearchModel({
-    this.albums = const [],
-    this.songs = const [],
-    this.playlists = const [],
+    this.albums,
+    this.songs,
+    this.playlists,
   });
 
-  final List<SingleTopSearch> albums;
-  final List<SingleTopSearch> songs;
-  final List<SingleTopSearch> playlists;
+  final List<SingleTopSearch>? albums;
+  final List<SingleTopSearch>? songs;
+  final List<SingleTopSearch>? playlists;
 
   factory TopSearchModel.fromJson(Map<String, dynamic> json) => TopSearchModel(
         albums: List<SingleTopSearch>.from(
@@ -24,6 +27,19 @@ class TopSearchModel {
         playlists: List<SingleTopSearch>.from(
             json['playlists']["data"].map((x) => SingleTopSearch.fromJson(x))),
       );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is TopSearchModel &&
+        listEquals(other.albums, albums) &&
+        listEquals(other.songs, songs) &&
+        listEquals(other.playlists, playlists);
+  }
+
+  @override
+  int get hashCode => albums.hashCode ^ songs.hashCode ^ playlists.hashCode;
 }
 
 class SingleTopSearch {
@@ -45,7 +61,7 @@ class SingleTopSearch {
   factory SingleTopSearch.fromJson(Map<String, dynamic> json) =>
       SingleTopSearch(
         id: json["id"],
-        title: json["title"],
+        title: FormatedString.formatedString(json["title"]),
         image: json["image"],
         type: chartTypeValues.map[json["type"]],
         description: json["description"],

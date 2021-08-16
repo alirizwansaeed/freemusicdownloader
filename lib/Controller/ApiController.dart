@@ -10,8 +10,7 @@ import 'package:freemusicdownloader/Services/ApiService.dart';
 import 'package:get/get.dart';
 
 class ApiController extends GetxController {
-  var isAlbumLoading = false.obs;
-  var isPlaylistLoading = false.obs;
+  var isloading = false.obs;
   CancelToken get cancelToken {
     return ApiService.cancelToken;
   }
@@ -29,17 +28,25 @@ class ApiController extends GetxController {
 
   void fetchSearchDetail(
       String value, int page, ViewFuctionType querytype) async {
-    var _viewAllSongsData =
-        await ApiService.fetchViewAllSongs(value, page, querytype);
+    if (page == 1) detailSearch(ViewAllSongsModel());
+    if (detailSearch.value.total == 0) isloading(true);
+    try {
+      var _viewAllSongsData =
+          await ApiService.fetchViewAllSongs(value, page, querytype);
 
-    if (_viewAllSongsData != null) {
-      if (page == 1) {
-        detailSearch(_viewAllSongsData);
-      } else if (page > 1 && _viewAllSongsData.results.isNotEmpty) {
-        detailSearch.update((val) {
-          val!.results.addAll(_viewAllSongsData.results);
-        });
+      if (_viewAllSongsData != null) {
+        if (page == 1) {
+          detailSearch(_viewAllSongsData);
+        } else if (page > 1 && _viewAllSongsData.results.isNotEmpty) {
+          detailSearch.update((val) {
+            val!.results.addAll(_viewAllSongsData.results);
+          });
+        }
       }
+    } catch (e) {
+      print(e);
+    } finally {
+      isloading(false);
     }
   }
 
@@ -58,26 +65,28 @@ class ApiController extends GetxController {
   }
 
   void fetchAlbum(String id) async {
-    isAlbumLoading(true);
+    isloading(true);
+    albumList(SingleAlbumModel());
     try {
       var _albumlist = await ApiService.fetchAlbum(id);
       if (_albumlist != null) {
         albumList(_albumlist);
       }
     } finally {
-      isAlbumLoading(false);
+      isloading(false);
     }
   }
 
   void fetchPlaylist(String id) async {
-    isPlaylistLoading(true);
+    isloading(true);
+    playListList(PlaylistModel());
     try {
       var _playList = await ApiService.fetchPlaylist(id);
       if (_playList != null) {
         playListList(_playList);
       }
     } finally {
-      isPlaylistLoading(false);
+      isloading(false);
     }
   }
 

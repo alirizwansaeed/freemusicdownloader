@@ -3,13 +3,14 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Controller/DownloadController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
+import 'package:freemusicdownloader/Page/DownloadDialog/DownloadSong.dart';
 import 'package:freemusicdownloader/Page/PlayerSheet/newprogress.dart';
 import 'package:freemusicdownloader/Shared/ColorList.dart';
+import 'package:freemusicdownloader/Shared/ImagePlaceHolder.dart';
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,7 +29,6 @@ class _PlayerSheetState extends State<PlayerSheet> {
   final _solidController = SolidController();
   final _toggleplayersheet = Get.find<TogglePlayersheetController>();
   final _audiocontroller = Get.find<AudioPlayerController>();
-  final _downloadController = Get.find<DownloadController>();
   Rx<double> _heightStream = 60.0.obs;
   Random _random = Random();
   Color? _randomColor;
@@ -150,6 +150,10 @@ class _PlayerSheetState extends State<PlayerSheet> {
                     230 /
                     (_meidaquery.size.height - 60)) +
                 60,
+            width: ((_heightStream.value - 60.0) *
+                    230 /
+                    (_meidaquery.size.height - 60)) +
+                60,
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(
@@ -159,7 +163,8 @@ class _PlayerSheetState extends State<PlayerSheet> {
                           2)),
               clipBehavior: Clip.antiAlias,
               child: CachedNetworkImage(
-                errorWidget: (context, url, error) => SizedBox.shrink(),
+                errorWidget: (context, url, error) => imagePlaceHolder(),
+                placeholder: (context, url) => imagePlaceHolder(),
                 imageUrl: ImageQuality.imageQuality(
                     value: _audiocontroller.currentPlayingSong.image,
                     size: 350),
@@ -257,11 +262,13 @@ class _PlayerSheetState extends State<PlayerSheet> {
                         Bounce(
                           duration: Duration(milliseconds: 200),
                           onPressed: () {
-                            _downloadController.songSize(
-                                _audiocontroller
+                            Get.bottomSheet(DownloadSong(
+                                songName:
+                                    _audiocontroller.currentPlayingSong.song,
+                                songUrl: _audiocontroller
                                     .currentPlayingSong.encryptedMediaUrl,
-                                _audiocontroller.currentPlayingSong.the320Kbps);
-
+                                is320: _audiocontroller
+                                    .currentPlayingSong.the320Kbps));
                           },
                           child: SvgPicture.asset(
                             'assets/download.svg',

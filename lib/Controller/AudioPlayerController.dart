@@ -34,12 +34,7 @@ class AudioPlayerController extends GetxController {
             id: _currentlyPlayingSongs[_currentPlayingIndex.value].id,
             album: _currentlyPlayingSongs[_currentPlayingIndex.value].album,
             image: _currentlyPlayingSongs[_currentPlayingIndex.value].image,
-            singers:
-                _currentlyPlayingSongs[_currentPlayingIndex.value].singers == ''
-                    ? _currentlyPlayingSongs[_currentPlayingIndex.value]
-                        .primaryartists
-                    : _currentlyPlayingSongs[_currentPlayingIndex.value]
-                        .singers,
+            singers: _currentlyPlayingSongs[_currentPlayingIndex.value].singers,
             song: _currentlyPlayingSongs[_currentPlayingIndex.value].song,
             year: _currentlyPlayingSongs[_currentPlayingIndex.value].year,
             the320Kbps:

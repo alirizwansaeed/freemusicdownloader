@@ -23,7 +23,6 @@ dependencies:
   flutter:
     sdk: flutter
   solid_bottom_sheet: ^0.1.10
-  flutter_neumorphic: ^3.1.0
   google_fonts: ^2.1.0
   cached_network_image: ^3.0.0
   flutter_staggered_grid_view: ^0.4.0
@@ -32,19 +31,14 @@ dependencies:
   just_audio: ^0.9.3
   dio: ^4.0.0
   font_awesome_flutter: ^9.1.0
-  another_xlider: ^1.0.0
-  auto_size_text: ^3.0.0-nullsafety.0
   shimmer: ^2.0.0
   flutter_bounce: ^1.1.0
   flutter_svg: ^0.22.0
   sliver_header_delegate: ^0.0.5
-  delayed_display: ^2.0.0
   page_transition: ^2.0.2
   external_path: ^1.0.1
   permission_handler: ^6.0.0
   filesize: ^2.0.1
-  liquid_progress_indicator: ^0.4.0
-  flare_flutter: ^3.0.1
   just_audio_background: ^0.0.1-beta.0+1
   rxdart: ^0.27.1
   expandable: ^5.0.1
@@ -53,6 +47,8 @@ dependencies:
   audio_video_progress_bar: ^0.9.0
   flutter_downloader: ^1.6.1
   lazy_loading_list: ^1.0.1
+  lottie: ^1.1.0
+  loading_indicator: ^3.0.1
 
 
   # The following adds the Cupertino Icons font to your application.

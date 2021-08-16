@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -5,6 +6,7 @@ import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Models/Types/Types.dart';
 import 'package:freemusicdownloader/Page/Album/Albums.dart';
 import 'package:freemusicdownloader/Page/playlist.dart/playlist.dart';
+import 'package:freemusicdownloader/Shared/ImagePlaceHolder.dart';
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:get/get.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
@@ -27,9 +29,9 @@ class HomeGridView extends StatelessWidget {
         padding: EdgeInsets.only(right: 8, left: 8, top: 20),
         crossAxisCount: 2,
         itemCount: list.length,
-        staggeredTileBuilder: (int index) => StaggeredTile.count(1, 1.1),
+        staggeredTileBuilder: (int index) => StaggeredTile.count(1, 1.12),
         mainAxisSpacing: 10.0,
-        crossAxisSpacing: 10.0,
+        crossAxisSpacing: 8.0,
         itemBuilder: (BuildContext context, int index) => Bounce(
           duration: Duration(milliseconds: 200),
           onPressed: () async {
@@ -81,32 +83,39 @@ class HomeGridView extends StatelessWidget {
   }
 
   Widget _girdTiles(int index) {
-    return Hero(
-      tag: list[index].id,
-      child: Column(
-        children: [
-          Expanded(
+    return Column(
+      children: [
+        Expanded(
+          child: Hero(
+            tag: list[index].id,
             child: Container(
               clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(4)),
-              child: Image.network(
-                ImageQuality.imageQuality(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: ImageQuality.imageQuality(
                   value: list[index].image,
                   size: 350,
                 ),
+                placeholder: (context, url) => imagePlaceHolder(),
+                errorWidget: (context, url, error) => imagePlaceHolder(),
                 fit: BoxFit.cover,
                 filterQuality: FilterQuality.high,
               ),
             ),
           ),
-          Text(
-            '${list[index].title}',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.grey.shade600),
-          ),
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 6,
+        ),
+        Text(
+          '${list[index].title}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Colors.grey.shade600),
+        ),
+      ],
     );
   }
 }

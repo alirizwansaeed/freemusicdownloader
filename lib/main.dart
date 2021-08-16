@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:freemusicdownloader/GetxBinding/InitialBindidng.dart';
 import 'package:freemusicdownloader/Page/Home/Home.dart';
 import 'package:freemusicdownloader/Page/PlayerSheet/playersheet.dart';

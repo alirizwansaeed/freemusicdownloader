@@ -77,13 +77,8 @@ class Setting extends StatelessWidget {
                     children: [
                       Padding(
                           padding: EdgeInsets.only(bottom: 20),
-                          child: Text('Developed By',
+                          child: Text('Ali Rizwan Saeed',
                               style: GoogleFonts.nunito())),
-                      Row(children: [
-                        Text(
-                          'Rai Ali Rizwan',
-                        )
-                      ]),
                     ],
                   )),
             ),

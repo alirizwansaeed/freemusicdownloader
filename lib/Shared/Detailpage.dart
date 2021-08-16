@@ -1,13 +1,13 @@
 import 'dart:math';
+import 'dart:ui';
 
+import 'package:bouncing_widget/bouncing_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freemusicdownloader/Page/DownloadDialog/DownloadSong.dart';
+import 'package:freemusicdownloader/Shared/ImagePlaceHolder.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
@@ -17,8 +17,6 @@ import 'package:freemusicdownloader/Models/SingleSong.dart';
 import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:freemusicdownloader/Shared/PopButton.dart';
 import 'package:freemusicdownloader/Shared/shimmerlist.dart';
-
-import '../../Shared/ColorList.dart';
 
 class Detail extends StatelessWidget {
   static const pagename = 'Detail';
@@ -66,31 +64,36 @@ class Detail extends StatelessWidget {
     return SliverPersistentHeader(
       pinned: true,
       delegate: FlexibleHeaderDelegate(
+        collapsedElevation: 0.0,
         leading: popButtom(context),
         statusBarHeight: MediaQuery.of(context).padding.top,
         expandedHeight: 250,
         background: MutableBackground(
-          collapsedColor: ColorList
-              .lightcolors[_random.nextInt(ColorList.lightcolors.length)],
           expandedWidget: Container(
-              padding: EdgeInsets.only(
-                bottom: 2,
+            padding: EdgeInsets.only(
+              bottom: 2,
+            ),
+            foregroundDecoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 0.9],
+                colors: [
+                  Colors.transparent,
+                  Theme.of(context).scaffoldBackgroundColor,
+                ],
               ),
-              foregroundDecoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [0.0, 0.9],
-                  colors: [
-                    Colors.transparent,
-                    Theme.of(context).scaffoldBackgroundColor,
-                  ],
-                ),
+            ),
+            child: CachedNetworkImage(
+              fit: BoxFit.cover,
+              imageUrl: ImageQuality.imageQuality(
+                value: routeImage,
+                size: 350,
               ),
-              child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl:
-                      ImageQuality.imageQuality(value: routeImage, size: 350))),
+              placeholder: (context, url) => imagePlaceHolder(),
+              errorWidget: (context, url, error) => imagePlaceHolder(),
+            ),
+          ),
         ),
         children: [
           FlexibleHeaderItem(
@@ -101,15 +104,21 @@ class Detail extends StatelessWidget {
             child: Hero(
               tag: routeId,
               child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                  height: 150,
-                  width: 150,
-                  child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: ImageQuality.imageQuality(
-                          value: routeImage, size: 350))),
+                clipBehavior: Clip.hardEdge,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                height: 150,
+                width: 150,
+                child: CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: ImageQuality.imageQuality(
+                    value: routeImage,
+                    size: 350,
+                  ),
+                  placeholder: (context, url) => imagePlaceHolder(),
+                  errorWidget: (context, url, error) => imagePlaceHolder(),
+                ),
+              ),
             ),
           ),
           FlexibleHeaderItem(
@@ -117,18 +126,16 @@ class Detail extends StatelessWidget {
             collapsedPadding:
                 EdgeInsets.only(left: 50, right: 4, top: 14, bottom: 15),
             expandedPadding: EdgeInsets.only(left: 160, bottom: 50, right: 4),
-            child: DelayedDisplay(
-              child: Text(
-                routeTitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.nunito(
-                  height: 1.1,
-                  wordSpacing: -1.5,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF333b66),
-                  fontSize: 22,
-                ),
+            child: Text(
+              routeTitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.nunito(
+                height: 1.1,
+                wordSpacing: -1.5,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF333b66),
+                fontSize: 22,
               ),
             ),
           ),
@@ -141,9 +148,7 @@ class Detail extends StatelessWidget {
                   options: [HeaderItemOptions.scale],
                   child: SizedBox(
                     height: 50,
-                    child: isLoading
-                        ? _headerShimmer(_size)
-                        : Column(
+                    child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -174,78 +179,27 @@ class Detail extends StatelessWidget {
     );
   }
 
-  Shimmer _headerShimmer(Size _size) {
-    return Shimmer.fromColors(
-      period: Duration(milliseconds: 500),
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.grey.shade100,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            margin: EdgeInsets.only(right: 20),
-            color: Colors.white,
-            height: 25,
-            width: _size.width - 180,
-          ),
-          Container(
-            margin: EdgeInsets.only(right: 20),
-            color: Colors.white,
-            height: 20,
-            width: 50,
-          ),
-        ],
-      ),
-    );
-  }
-
   SliverToBoxAdapter _playAllButton() {
     return SliverToBoxAdapter(
-      child: DelayedDisplay(
-        slidingCurve: Curves.bounceOut,
-        slidingBeginOffset: const Offset(.5, 0.0),
-        child: Container(
-          padding: EdgeInsets.only(left: 4, right: 4),
-          height: 100,
-          child: Row(
-            children: [
-              Text(
-                'Songs',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.nunito(
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF333b66),
-                  fontSize: 22,
-                ),
+      child: SizedBox(
+        height: 60,
+        child: Center(
+          child: BouncingWidget(
+            onPressed: () {
+              _audioplayerController.loadSong(songs, 0, '');
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFFC2201),
+                borderRadius: BorderRadius.circular(20),
               ),
-              Expanded(
-                child: Divider(
-                  indent: 10,
-                  thickness: 5,
-                  height: 10,
-                  color: Colors.grey.shade200,
-                ),
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              child: Text(
+                'Play All Songs',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
-              Bounce(
-                duration: Duration(milliseconds: 200),
-                onPressed: () {
-                  _audioplayerController.loadSong(songs, 0, routeId);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Obx(
-                    () => FaIcon(
-                      _audioplayerController.currentAlbumId == routeId
-                          ? FontAwesomeIcons.pause
-                          : FontAwesomeIcons.play,
-                      size: 40,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -257,116 +211,52 @@ class Detail extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 70),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
-          (BuildContext context, int index) => Bounce(
-            onPressed: () async {
+          (BuildContext context, int index) => ListTile(
+            onTap: () {
               _audioplayerController.loadSong(songs, index, routeId);
             },
-            duration: Duration(milliseconds: 100),
-            child: Card(
-              elevation: 0.0,
+            horizontalTitleGap: 6.0,
+            dense: true,
+            leading: Container(
+              width: 50,
               clipBehavior: Clip.hardEdge,
-              child: Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    stops: [0, 1.0],
-                    colors: [
-                      Theme.of(context).scaffoldBackgroundColor.withOpacity(0),
-                      ColorList.lightcolors[
-                          _random.nextInt(ColorList.lightcolors.length)]
-                    ],
-                  ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: ImageQuality.imageQuality(
+                  value: songs[index].image,
+                  size: 150,
                 ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: Container(
-                        foregroundDecoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            stops: [0.6, 1.0],
-                            colors: [
-                              Colors.white.withOpacity(0.0),
-                              Theme.of(context).scaffoldBackgroundColor
-                            ],
-                          ),
-                        ),
-                        height: 60,
-                        width: 60,
-                        child: Image.network(
-                          ImageQuality.imageQuality(
-                            value: songs[index].image,
-                            size: 150,
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 5,
-                      left: 62,
-                      right: 40,
-                      child: Text(
-                        songs[index].song,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.nunito(
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF333b66),
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 30,
-                      left: 62,
-                      right: 40,
-                      child: Text(
-                        songs[index].singers,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      child: Bounce(
-                        duration: Duration(milliseconds: 100),
-                        onPressed: () {
-                          Get.bottomSheet(DownloadSong(
-                            songName: songs[index].song,
-                            songUrl: songs[index].encryptedMediaUrl,
-                            is320: songs[index].the320Kbps,
-                          ));
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 5),
-                          height: 50,
-                          width: 40,
-                          child: Container(
-                            padding:
-                                EdgeInsets.only(left: 10, top: 5, bottom: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(.5),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                bottomLeft: Radius.circular(20),
-                              ),
-                            ),
-                            height: 40,
-                            width: 40,
-                            child: SvgPicture.asset(
-                              'assets/download.svg',
-                              color: Color(0xFF333b66),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                errorWidget: (context, url, error) => imagePlaceHolder(),
+                placeholder: (context, url) => imagePlaceHolder(),
+                fit: BoxFit.cover,
+              ),
+            ),
+            title: Text(
+              songs[index].song,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              songs[index].singers,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Bounce(
+              duration: Duration(milliseconds: 100),
+              onPressed: () {
+                Get.bottomSheet(DownloadSong(
+                  songName: songs[index].song,
+                  songUrl: songs[index].encryptedMediaUrl,
+                  is320: songs[index].the320Kbps,
+                ));
+              },
+              child: SvgPicture.asset(
+                'assets/download.svg',
+                color: Colors.grey.shade600,
+                height: 23,
+                width: 23,
               ),
             ),
           ),

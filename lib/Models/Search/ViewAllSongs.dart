@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:freemusicdownloader/Shared/FormatedString.dart';
 import 'package:freemusicdownloader/Shared/decrypt_url.dart';
 
@@ -20,6 +22,18 @@ class ViewAllSongsModel {
         results:
             List<Result>.from(json["results"].map((x) => Result.fromJson(x))),
       );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is ViewAllSongsModel &&
+      other.total == total &&
+      listEquals(other.results, results);
+  }
+
+  @override
+  int get hashCode => total.hashCode ^ results.hashCode;
 }
 
 class Result {

@@ -1,10 +1,8 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:freemusicdownloader/Controller/DownloadController.dart';
-import 'package:freemusicdownloader/Shared/ColorList.dart';
 
 class DownloadSong extends StatelessWidget {
   final String songName;
@@ -21,21 +19,21 @@ class DownloadSong extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _downloadController.songSize(songUrl, is320);
-    Random _random = Random();
+
     return WillPopScope(
       onWillPop: () async {
         _downloadController.songSizeCancelToken();
         return true;
       },
       child: Container(
-        height: 150,
-        color: ColorList.primaries[_random.nextInt(ColorList.primaries.length)],
-        child: _topContainer(),
+        height: 120,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: _innerWidget(),
       ),
     );
   }
 
-  Widget _topContainer() {
+  Widget _innerWidget() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -46,19 +44,13 @@ class DownloadSong extends StatelessWidget {
           songName,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.nunito(
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-            fontSize: 20,
+          style: TextStyle(
+            color: Color(0xFF333b66),
+            fontSize: 16,
           ),
         ),
-        Text(
-          'Choose Qaulity',
-          style: GoogleFonts.nunito(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: 14,
-          ),
+        SizedBox(
+          height: 10,
         ),
         Wrap(
           children: [

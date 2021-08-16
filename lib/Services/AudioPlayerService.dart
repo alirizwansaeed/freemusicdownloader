@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:freemusicdownloader/Shared/ImageQuality.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:rxdart/rxdart.dart';
@@ -49,8 +50,10 @@ class AudioPlayerService {
                   tag: MediaItem(
                     id: e.id,
                     title: e.song,
-                    artUri: Uri.parse(e.image),
-                    artist: e.primaryartists,
+                    artUri: Uri.parse(
+                        ImageQuality.imageQuality(value: e.image, size: 150)),
+                    artist: e.singers,
+                    album: e.album,
                   ),
                 ),
               )
@@ -80,13 +83,13 @@ class AudioPlayerService {
     _audioPlayer.seek(position, index: index);
   }
 
- Future< void> loopMood(LoopMode loopMode)async {
-   await _audioPlayer.setLoopMode(loopMode);
+  Future<void> loopMood(LoopMode loopMode) async {
+    await _audioPlayer.setLoopMode(loopMode);
   }
 
   Future<void> shuffle(bool shaffle) async {
     await _audioPlayer.setShuffleModeEnabled(shaffle);
-  await  _audioPlayer.shuffle();
+    await _audioPlayer.shuffle();
   }
 }
 

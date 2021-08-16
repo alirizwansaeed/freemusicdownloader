@@ -21,7 +21,7 @@ class Playlist extends StatelessWidget {
       onWillPop: () async {
         if (_toggleplayersheet.isBottomsheetopen.value == false) {
           _apicontroller.cancelToken.cancel('Playlist request cancel');
-          _apicontroller.playListList(PlaylistModel());
+      
         }
         return _toggleplayersheet.isBottomsheetopen.value ? false : true;
       },
@@ -31,7 +31,7 @@ class Playlist extends StatelessWidget {
             songs: _apicontroller.playListList.value.songs,
             releaseYear: '',
             primaryAtrist: '',
-            isLoading: _apicontroller.isAlbumLoading.value,
+            isLoading: _apicontroller.isloading.value,
             routeTitle: _routedata['title'],
             routeId: _routedata['id'],
             routeImage: _routedata['image'],

@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:freemusicdownloader/Controller/ApiController.dart';
@@ -94,7 +93,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         labelPadding: EdgeInsets.symmetric(horizontal: 7),
         indicatorSize: TabBarIndicatorSize.label,
         indicatorWeight: 3,
-        indicatorColor: Colors.pink,
+        indicatorColor: Color(0xFFFC2201),
         labelColor: Color(0xFF333b66),
         isScrollable: true,
         controller: _tabBarController,
@@ -112,14 +111,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          'Floovi',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.nunito(
-              fontWeight: FontWeight.w900,
-              color: Color(0xFF333b66),
-              fontSize: 30),
+        Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Text(
+            'Floovi',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.nunito(
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF333b66),
+                fontSize: 30),
+          ),
         ),
         Row(
           children: [
