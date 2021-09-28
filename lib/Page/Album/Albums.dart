@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freemusicdownloader/Models/AlbumModel.dart';
 import 'package:get/get.dart';
 
 import 'package:freemusicdownloader/Controller/ApiController.dart';

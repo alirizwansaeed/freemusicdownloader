@@ -10,7 +10,6 @@ import 'package:freemusicdownloader/Page/DownloadDialog/DownloadSong.dart';
 import 'package:freemusicdownloader/Shared/ImagePlaceHolder.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
 import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Models/SingleSong.dart';

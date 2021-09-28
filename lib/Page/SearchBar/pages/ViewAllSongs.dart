@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:freemusicdownloader/Controller/AudioPlayerController.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
-import 'package:freemusicdownloader/Models/Search/ViewAllSongs.dart';
 import 'package:freemusicdownloader/Models/SingleSong.dart';
 import 'package:freemusicdownloader/Page/DownloadDialog/DownloadSong.dart';
 import 'package:freemusicdownloader/Page/SearchBar/SearchBar.dart';

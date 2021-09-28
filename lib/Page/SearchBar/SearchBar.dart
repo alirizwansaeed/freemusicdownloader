@@ -1,6 +1,5 @@
 import 'package:bouncing_widget/bouncing_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
@@ -282,25 +281,7 @@ class _SearchBarState extends State<SearchBar> {
             width: 130,
             child: Column(
               children: [
-                FlipCard(
-                  back: Container(
-                    height: 120,
-                    width: 120,
-                    padding: EdgeInsets.all(4.0),
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF333b66),
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        data[index].description!,
-                        maxLines: 6,
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ),
-                  ),
-                  front: Container(
+                Container(
                     height: 120,
                     width: 120,
                     clipBehavior: Clip.antiAlias,
@@ -314,8 +295,7 @@ class _SearchBarState extends State<SearchBar> {
                       placeholder: (context, url) => imagePlaceHolder(),
                       fit: BoxFit.cover,
                     ),
-                  ),
-                ),
+                  ),     
                 Padding(
                   padding: const EdgeInsets.only(left: 6),
                   child: Center(

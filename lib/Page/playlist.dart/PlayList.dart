@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freemusicdownloader/Models/PlaylistModel.dart';
 import 'package:get/get.dart';
 
 import 'package:freemusicdownloader/Controller/ApiController.dart';
@@ -21,7 +20,7 @@ class Playlist extends StatelessWidget {
       onWillPop: () async {
         if (_toggleplayersheet.isBottomsheetopen.value == false) {
           _apicontroller.cancelToken.cancel('Playlist request cancel');
-      
+
         }
         return _toggleplayersheet.isBottomsheetopen.value ? false : true;
       },

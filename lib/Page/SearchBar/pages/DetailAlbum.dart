@@ -1,12 +1,10 @@
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bounce/flutter_bounce.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:freemusicdownloader/Controller/TogglePlayerSheetController.dart';
-import 'package:freemusicdownloader/Models/Search/ViewAllSongs.dart';
 import 'package:freemusicdownloader/Page/playlist.dart/playlist.dart';
 import 'package:freemusicdownloader/Shared/ImagePlaceHolder.dart';
 import 'package:freemusicdownloader/Shared/loading.dart';
@@ -189,21 +187,7 @@ class ViewAllAlbums extends StatelessWidget {
         Expanded(
           child: Hero(
             tag: _apicontroller.detailSearch.value.results[index].id!,
-            child: FlipCard(
-              back: Container(
-                padding: EdgeInsets.all(4.0),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Color(0xFF333b66)),
-                clipBehavior: Clip.antiAlias,
-                child: Text(
-                  _apicontroller.detailSearch.value.results[index].subtitle! +
-                      ' Years:' +
-                      _apicontroller.detailSearch.value.results[index].year,
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              front: Container(
+            child: Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(4)),
                 clipBehavior: Clip.antiAlias,
@@ -218,7 +202,6 @@ class ViewAllAlbums extends StatelessWidget {
                   errorWidget: (context, url, error) => imagePlaceHolder(),
                 ),
               ),
-            ),
           ),
         ),
         SizedBox(height: 6.0),

@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
       initialBinding: InitialBinding(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          accentColor: Colors.transparent,
           colorScheme: ColorScheme.fromSwatch(accentColor: Colors.transparent)),
       home: Stack(
         children: [
